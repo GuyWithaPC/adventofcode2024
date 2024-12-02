@@ -1,7 +1,7 @@
 use std::fs;
 
 pub fn load(input_dir: &str, day: u32, suffix: Option<&str>) -> String {
-    load_raw(input_dir, day, suffix).trim().replace('\r',"")
+    load_raw(input_dir, day, suffix).trim().replace('\r', "")
 }
 
 pub fn load_raw(input_dir: &str, day: u32, suffix: Option<&str>) -> String {

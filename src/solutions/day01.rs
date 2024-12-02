@@ -1,4 +1,3 @@
-
 use std::collections::HashSet;
 
 use crate::input;
@@ -7,11 +6,17 @@ fn split_lists(data: &str) -> (Vec<isize>, Vec<isize>) {
     let mut list_a = Vec::new();
     let mut list_b = Vec::new();
     for row in data.lines() {
-        let (new_a, new_b) = row.split_once("   ").unwrap_or_else(|| panic!("Malformed input file."));
-        list_a.push(isize::from_str_radix(new_a, 10).unwrap_or_else(|_| panic!("Malformed input file.")));
-        list_b.push(isize::from_str_radix(new_b, 10).unwrap_or_else(|_| panic!("Malformed input file.")));
+        let (new_a, new_b) = row
+            .split_once("   ")
+            .unwrap_or_else(|| panic!("Malformed input file."));
+        list_a.push(
+            isize::from_str_radix(new_a, 10).unwrap_or_else(|_| panic!("Malformed input file.")),
+        );
+        list_b.push(
+            isize::from_str_radix(new_b, 10).unwrap_or_else(|_| panic!("Malformed input file.")),
+        );
     }
-    return (list_a, list_b)
+    return (list_a, list_b);
 }
 
 fn part_1(data: &str) {

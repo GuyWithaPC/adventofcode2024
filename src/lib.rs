@@ -1,13 +1,12 @@
-
-pub mod solutions;
 mod input;
+pub mod solutions;
 
 use thiserror::Error;
 
-#[derive(Error,Debug)]
+#[derive(Error, Debug)]
 pub enum Error {
     #[error("Day not yet implemented: {}.", .0)]
-    DayNotImplemented(u32)
+    DayNotImplemented(u32),
 }
 
 pub fn run_day(input_dir: &str, day: u32) -> Result<(), Error> {
@@ -20,7 +19,7 @@ pub fn run_day(input_dir: &str, day: u32) -> Result<(), Error> {
             solutions::day02::main(input_dir);
             Ok(())
         }
-        _ => Err(Error::DayNotImplemented(day))
+        _ => Err(Error::DayNotImplemented(day)),
     }
 }
 
@@ -28,7 +27,7 @@ pub fn run_all(input_dir: &str) {
     for day in 1..=25 {
         match run_day(input_dir, day) {
             Ok(()) => continue,
-            Err(Error::DayNotImplemented(_)) => break
+            Err(Error::DayNotImplemented(_)) => break,
         }
     }
 }
