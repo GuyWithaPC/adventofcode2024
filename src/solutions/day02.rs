@@ -58,13 +58,11 @@ fn part_1(data: &str) {
 
 fn part_2(data: &str) {
     let mut safe = 0;
-    let mut idx = 0;
     for report in data.lines() {
         let parsed_report = parse_report(report);
         if is_safe_dampener(&parsed_report) {
             safe += 1
         }
-        idx += 1;
     }
     println!("Safe reports: {safe}");
 }
