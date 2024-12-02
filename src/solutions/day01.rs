@@ -36,7 +36,7 @@ fn part_2(data: &str) {
 }
 
 pub fn main(input_dir: &str) {
-    println!("Day 1: Historian Hysteria");
+    println!("--- Day 1: Historian Hysteria ---");
     let data = input::load(input_dir, 1, None);
     println!("Part 1:");
     part_1(&data);
