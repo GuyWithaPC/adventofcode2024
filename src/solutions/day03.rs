@@ -30,14 +30,21 @@ fn part_2(data: &str) {
         .scan(true, |enabled, instr| {
             let (_, [func, nums]) = instr.extract();
             match func {
-                "mul" => if *enabled { Some(strtup_to_int(nums)) } else { Some((0,0)) }
+                "mul" => {
+                    if *enabled {
+                        Some(strtup_to_int(nums))
+                    } else {
+                        Some((0, 0))
+                    }
+                }
                 "do" => {
                     *enabled = true;
-                    Some((0,0))
+                    Some((0, 0))
                 }
-                _ => { // this is the "don't" branch
+                _ => {
+                    // this is the "don't" branch
                     *enabled = false;
-                    Some((0,0))
+                    Some((0, 0))
                 }
             }
         })
@@ -47,7 +54,7 @@ fn part_2(data: &str) {
 }
 
 pub fn main(input_dir: &str) {
-    println!("--- Day 2: Red-Nosed Reports ---");
+    println!("--- Day 3: Mull It Over ---");
     let data = input::load(input_dir, 3, None);
     println!("Part 1:");
     part_1(&data);
