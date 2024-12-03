@@ -3,7 +3,6 @@ use regex::Regex;
 use crate::input;
 
 fn strtup_to_int(strtup: &str) -> (isize, isize) {
-    println!("{strtup}");
     let strnums = strtup.split_once(",").unwrap();
     return (
         isize::from_str_radix(strnums.0, 10).unwrap(),
@@ -24,9 +23,34 @@ fn part_1(data: &str) {
     println!("added results: {result}");
 }
 
+fn part_2(data: &str) {
+    let instr_matcher = Regex::new(r"(mul|don't|do)\((\d+,\d+|)\)").unwrap();
+    let instrs: Vec<(isize, isize)> = instr_matcher
+        .captures_iter(data)
+        .scan(true, |enabled, instr| {
+            let (_, [func, nums]) = instr.extract();
+            match func {
+                "mul" => if *enabled { Some(strtup_to_int(nums)) } else { Some((0,0)) }
+                "do" => {
+                    *enabled = true;
+                    Some((0,0))
+                }
+                _ => { // this is the "don't" branch
+                    *enabled = false;
+                    Some((0,0))
+                }
+            }
+        })
+        .collect();
+    let result: isize = instrs.iter().map(|(x, y)| x * y).sum();
+    println!("added results: {result}");
+}
+
 pub fn main(input_dir: &str) {
     println!("--- Day 2: Red-Nosed Reports ---");
     let data = input::load(input_dir, 3, None);
     println!("Part 1:");
     part_1(&data);
+    println!("Part 2:");
+    part_2(&data);
 }
