@@ -81,9 +81,9 @@ fn part_1(data: &str) {
 }
 
 fn is_xmas(grid: &HashMap<(usize, usize), char>, loc: (isize, isize)) -> bool {
-    let pattern: Vec<usize> = [(-1, -1), (-1, 1), (1, -1), (1, 1)]
+    if let Some(pattern) = [(-1, -1), (-1, 1), (1, -1), (1, 1)]
         .iter()
-        .filter_map(|dir| {
+        .map(|dir| {
             if let Some(c) = grid.get(&((loc.0 + dir.0) as usize, (loc.1 + dir.1) as usize)) {
                 match *c {
                     'M' => Some(0),
@@ -94,14 +94,18 @@ fn is_xmas(grid: &HashMap<(usize, usize), char>, loc: (isize, isize)) -> bool {
                 None
             }
         })
-        .collect();
-    if pattern.len() != 4 || pattern.iter().fold(0, |sum, x| sum + *x) != 2 {
-        return false;
-    }
-    match (pattern[0], pattern[1], pattern[2], pattern[3]) {
-        (0, 1, 1, 0) => false,
-        (1, 0, 0, 1) => false,
-        _ => true,
+        .collect::<Option<Vec<usize>>>()
+    {
+        if pattern.len() != 4 || pattern.iter().fold(0usize, |sum, x| sum + *x) != 2usize {
+            return false
+        }
+        match (pattern[0], pattern[1], pattern[2], pattern[3]) {
+            (0, 1, 1, 0) => false,
+            (1, 0, 0, 1) => false,
+            _ => true,
+        }
+    } else {
+        false
     }
 }
 
