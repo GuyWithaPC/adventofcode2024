@@ -4,8 +4,8 @@ use crate::input;
 
 fn file_grid_size(data: &str) -> (usize, usize) {
     (
-        data.lines().map(|_| 1).sum(),
-        data.lines().fold(0, |acc, x| x.len()),
+        data.lines().count(),
+        data.lines().next().unwrap().len()
     )
 }
 
