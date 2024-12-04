@@ -80,10 +80,52 @@ fn part_1(data: &str) {
             }
         }
     }
-    println!("number of XMAS: {count}");
+    println!("Number of XMAS: {count}");
 }
 
-fn part_2(data: &str) {}
+fn is_xmas(grid: &HashMap<(usize, usize), char>, loc: (isize, isize)) -> bool {
+    let pattern: Vec<usize> = [(-1, -1), (-1, 1), (1, -1), (1, 1)]
+        .iter()
+        .map(|dir| {
+            if let Some(c) = grid.get(&((loc.0 + dir.0) as usize, (loc.1 + dir.1) as usize)) {
+                match *c {
+                    'M' => 0,
+                    'S' => 1,
+                    _ => 2,
+                }
+            } else {
+                2
+            }
+        })
+        .collect();
+    if pattern.iter().any(|x| *x == 2) {
+        return false;
+    }
+    if pattern.iter().map(|x| *x).fold(0, |acc, x| acc + x) != 2 {
+        return false;
+    }
+    match (pattern[0], pattern[1], pattern[2], pattern[3]) {
+        (0, 1, 1, 0) => false,
+        (1, 0, 0, 1) => false,
+        _ => true,
+    }
+}
+
+fn part_2(data: &str) {
+    let grid = file_to_grid(data);
+    let (rows, cols) = file_grid_size(data);
+    let mut count = 0;
+    for y in 0..rows {
+        for x in 0..cols {
+            if grid[&(y, x)] == 'A'
+                && is_xmas(&grid, (y.try_into().unwrap(), x.try_into().unwrap()))
+            {
+                count += 1;
+            }
+        }
+    }
+    println!("Number of X-MAS: {count}");
+}
 
 pub fn main(input_dir: &str) {
     println!("--- Day 4: Ceres Search ---");
