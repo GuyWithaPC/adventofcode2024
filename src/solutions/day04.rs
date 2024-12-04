@@ -3,10 +3,7 @@ use std::collections::HashMap;
 use crate::input;
 
 fn file_grid_size(data: &str) -> (usize, usize) {
-    (
-        data.lines().count(),
-        data.lines().next().unwrap().len()
-    )
+    (data.lines().count(), data.lines().next().unwrap().len())
 }
 
 fn file_to_grid(data: &str) -> HashMap<(usize, usize), char> {
@@ -86,22 +83,19 @@ fn part_1(data: &str) {
 fn is_xmas(grid: &HashMap<(usize, usize), char>, loc: (isize, isize)) -> bool {
     let pattern: Vec<usize> = [(-1, -1), (-1, 1), (1, -1), (1, 1)]
         .iter()
-        .map(|dir| {
+        .filter_map(|dir| {
             if let Some(c) = grid.get(&((loc.0 + dir.0) as usize, (loc.1 + dir.1) as usize)) {
                 match *c {
-                    'M' => 0,
-                    'S' => 1,
-                    _ => 2,
+                    'M' => Some(0),
+                    'S' => Some(1),
+                    _ => None,
                 }
             } else {
-                2
+                None
             }
         })
         .collect();
-    if pattern.iter().any(|x| *x == 2) {
-        return false;
-    }
-    if pattern.iter().map(|x| *x).fold(0, |acc, x| acc + x) != 2 {
+    if pattern.len() != 4 || pattern.iter().fold(0, |sum, x| sum + *x) != 2 {
         return false;
     }
     match (pattern[0], pattern[1], pattern[2], pattern[3]) {
