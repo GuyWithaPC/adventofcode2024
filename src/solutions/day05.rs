@@ -1,38 +1,13 @@
 use std::collections::{HashMap, HashSet};
 
-fn parse_input(input: &str) -> (HashMap<usize, HashSet<usize>>, Vec<Vec<usize>>) {
-    let mut lines = input.lines();
-    let x_y_pairs: Vec<(usize, usize)> = lines
-        .by_ref()
-        .take_while(|&l| !l.is_empty())
-        .map(|l| {
-            let (x, y) = l.split_once("|").unwrap();
-            return (x.parse::<usize>().unwrap(), y.parse::<usize>().unwrap());
-        })
-        .collect();
-    let mut ordering_rules: HashMap<usize, HashSet<usize>> = HashMap::new();
-    for (x, y) in x_y_pairs {
-        if let Some(set) = ordering_rules.get_mut(&y) {
-            set.insert(x);
-        } else {
-            let mut set = HashSet::new();
-            set.insert(x);
-            ordering_rules.insert(y, set);
-        }
-    }
-    let pages_produced: Vec<Vec<usize>> = lines
-        .map(|l| {
-            l.split(",")
-                .map(|n| n.parse::<usize>().unwrap())
-                .collect::<Vec<usize>>()
-        })
-        .collect();
-    return (ordering_rules, pages_produced);
-}
+crate::day!("Print Queue" => {
+    part_1,
+    part_2
+});
 
-fn part_1(data: &str) {
+fn part_1(data: &str) -> usize {
     let (ordering_rules, pages_produced) = parse_input(data);
-    let valid: usize = pages_produced
+    pages_produced
         .iter()
         .filter(|page| {
             let existing: HashSet<usize> = page.iter().copied().collect();
@@ -53,21 +28,12 @@ fn part_1(data: &str) {
                 .all(|b| b)
         })
         .map(|nums| nums[nums.len() / 2])
-        .sum();
-    println!("Valid: {valid}");
+        .sum()
 }
 
-// check if a is dependent on b, based on the ordering rules
-fn is_dependent(a: usize, b: usize, rules: &HashMap<usize, HashSet<usize>>) -> bool {
-    match rules.get(&a) {
-        None => false,
-        Some(deps) => deps.contains(&b),
-    }
-}
-
-fn part_2(data: &str) {
+fn part_2(data: &str) -> usize {
     let (ordering_rules, mut pages_produced) = parse_input(data);
-    let reordered: usize = pages_produced
+    pages_produced
         .iter_mut()
         .filter(|page| {
             let existing: HashSet<usize> = page.iter().copied().collect();
@@ -115,14 +81,43 @@ fn part_2(data: &str) {
             return sorted;
         })
         .map(|nums| nums[nums.len() / 2])
-        .sum();
-    println!("Reordered: {reordered}");
+        .sum()
 }
 
-pub fn main(input: &str) {
-    println!("--- Day 5: ---");
-    println!("Part 1:");
-    part_1(input);
-    println!("Part 2:");
-    part_2(input);
+fn parse_input(input: &str) -> (HashMap<usize, HashSet<usize>>, Vec<Vec<usize>>) {
+    let mut lines = input.lines();
+    let x_y_pairs: Vec<(usize, usize)> = lines
+        .by_ref()
+        .take_while(|&l| !l.is_empty())
+        .map(|l| {
+            let (x, y) = l.split_once("|").unwrap();
+            return (x.parse::<usize>().unwrap(), y.parse::<usize>().unwrap());
+        })
+        .collect();
+    let mut ordering_rules: HashMap<usize, HashSet<usize>> = HashMap::new();
+    for (x, y) in x_y_pairs {
+        if let Some(set) = ordering_rules.get_mut(&y) {
+            set.insert(x);
+        } else {
+            let mut set = HashSet::new();
+            set.insert(x);
+            ordering_rules.insert(y, set);
+        }
+    }
+    let pages_produced: Vec<Vec<usize>> = lines
+        .map(|l| {
+            l.split(",")
+                .map(|n| n.parse::<usize>().unwrap())
+                .collect::<Vec<usize>>()
+        })
+        .collect();
+    return (ordering_rules, pages_produced);
+}
+
+// check if a is dependent on b, based on the ordering rules
+fn is_dependent(a: usize, b: usize, rules: &HashMap<usize, HashSet<usize>>) -> bool {
+    match rules.get(&a) {
+        None => false,
+        Some(deps) => deps.contains(&b),
+    }
 }

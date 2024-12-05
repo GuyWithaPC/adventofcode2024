@@ -1,46 +1,43 @@
-crate::day!("Ceres Search");
-
 use std::collections::HashMap;
 
-impl Part1 for Day {
-    type Output = usize;
-    fn run(data: &str) -> usize {
-        let grid = file_to_grid(data);
-        let (rows, cols) = file_grid_size(data);
-        let mut count = 0;
-        for y in 0..rows {
-            for x in 0..cols {
-                if grid[&(y, x)] == 'X' {
-                    count += follow_xmas(
-                        &grid,
-                        (y.try_into().unwrap(), x.try_into().unwrap()),
-                        (0, 0),
-                        'X',
-                    );
-                }
+crate::day!("Ceres Search" => {
+    part_1,
+    part_2
+});
+
+fn part_1(data: &str) -> usize {
+    let grid = file_to_grid(data);
+    let (rows, cols) = file_grid_size(data);
+    let mut count = 0;
+    for y in 0..rows {
+        for x in 0..cols {
+            if grid[&(y, x)] == 'X' {
+                count += follow_xmas(
+                    &grid,
+                    (y.try_into().unwrap(), x.try_into().unwrap()),
+                    (0, 0),
+                    'X',
+                );
             }
         }
-        return count;
     }
+    return count;
 }
 
-impl Part2 for Day {
-    type Output = usize;
-    fn run(data: &str) -> usize {
-        let grid = file_to_grid(data);
-        let (rows, cols) = file_grid_size(data);
-        let mut count = 0;
-        for y in 0..rows {
-            for x in 0..cols {
-                if grid[&(y, x)] == 'A'
-                    && is_xmas(&grid, (y.try_into().unwrap(), x.try_into().unwrap()))
-                {
-                    count += 1;
-                }
+fn part_2(data: &str) -> usize {
+    let grid = file_to_grid(data);
+    let (rows, cols) = file_grid_size(data);
+    let mut count = 0;
+    for y in 0..rows {
+        for x in 0..cols {
+            if grid[&(y, x)] == 'A'
+                && is_xmas(&grid, (y.try_into().unwrap(), x.try_into().unwrap()))
+            {
+                count += 1;
             }
         }
-        return count;
     }
+    return count;
 }
 
 fn file_grid_size(data: &str) -> (usize, usize) {

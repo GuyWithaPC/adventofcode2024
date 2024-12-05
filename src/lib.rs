@@ -5,32 +5,24 @@ use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum Error {
-    #[error("Day not yet implemented: {}.", .0)]
+    #[error("Day not implemented: {}.", .0)]
     DayNotImplemented(u32),
+}
+
+macro_rules! do_day {
+    ($day:ident, $data:expr) => {{
+        solutions::$day::main($data);
+        Ok(())
+    }};
 }
 
 pub fn run_day(input_dir: &str, day: u32) -> Result<(), Error> {
     match day {
-        1 => {
-            solutions::day01::main(&input::load(input_dir, 1));
-            Ok(())
-        }
-        2 => {
-            solutions::day02::main(&input::load(input_dir, 2));
-            Ok(())
-        }
-        3 => {
-            solutions::day03::main(&input::load(input_dir, 3));
-            Ok(())
-        }
-        4 => {
-            solutions::day04::main(&input::load(input_dir, 4));
-            Ok(())
-        }
-        5 => {
-            solutions::day05::main(&input::load(input_dir, 5));
-            Ok(())
-        }
+        1 => do_day!(day01, &input::load(input_dir, 1)),
+        2 => do_day!(day02, &input::load(input_dir, 2)),
+        3 => do_day!(day03, &input::load(input_dir, 3)),
+        4 => do_day!(day04, &input::load(input_dir, 4)),
+        5 => do_day!(day05, &input::load(input_dir, 5)),
         _ => Err(Error::DayNotImplemented(day)),
     }
 }

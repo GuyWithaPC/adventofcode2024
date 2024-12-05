@@ -1,21 +1,18 @@
-crate::day!("Red-Nosed Reports");
+crate::day!("Red-Nosed Reports" => {
+    part_1,
+    part_2
+});
 
-impl Part1 for Day {
-    type Output = usize;
-    fn run(data: &str) -> usize {
-        data.lines()
-            .filter(|&r| is_safe_simple(&parse_report(r)))
-            .count()
-    }
+fn part_1(data: &str) -> usize {
+    data.lines()
+        .filter(|&r| is_safe_simple(&parse_report(r)))
+        .count()
 }
 
-impl Part2 for Day {
-    type Output = usize;
-    fn run(data: &str) -> usize {
-        data.lines()
-            .filter(|&r| is_safe_dampener(&parse_report(r)))
-            .count()
-    }
+fn part_2(data: &str) -> usize {
+    data.lines()
+        .filter(|&r| is_safe_dampener(&parse_report(r)))
+        .count()
 }
 
 fn parse_report(report: &str) -> Vec<isize> {
