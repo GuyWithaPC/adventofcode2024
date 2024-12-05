@@ -9,24 +9,7 @@ fn part_1(data: &str) -> usize {
     let (ordering_rules, pages_produced) = parse_input(data);
     pages_produced
         .iter()
-        .filter(|page| {
-            let existing: HashSet<usize> = page.iter().copied().collect();
-            page.iter()
-                .scan(HashSet::new(), |seen, current| {
-                    let mut valid = true;
-                    if let Some(pre) = ordering_rules.get(current) {
-                        valid = seen.is_superset(
-                            &existing
-                                .intersection(pre)
-                                .copied()
-                                .collect::<HashSet<usize>>(),
-                        );
-                    }
-                    seen.insert(*current);
-                    Some(valid)
-                })
-                .all(|b| b)
-        })
+        .filter(|page| is_valid_page(*page, &ordering_rules))
         .map(|nums| nums[nums.len() / 2])
         .sum()
 }
@@ -35,25 +18,7 @@ fn part_2(data: &str) -> usize {
     let (ordering_rules, mut pages_produced) = parse_input(data);
     pages_produced
         .iter_mut()
-        .filter(|page| {
-            let existing: HashSet<usize> = page.iter().copied().collect();
-            !page
-                .iter()
-                .scan(HashSet::new(), |seen, current| {
-                    let mut valid = true;
-                    if let Some(pre) = ordering_rules.get(current) {
-                        valid = seen.is_superset(
-                            &existing
-                                .intersection(pre)
-                                .copied()
-                                .collect::<HashSet<usize>>(),
-                        );
-                    }
-                    seen.insert(*current);
-                    Some(valid)
-                })
-                .all(|b| b)
-        })
+        .filter(|page| !is_valid_page(*page, &ordering_rules))
         .map(|page| {
             let mut sorted = Vec::new();
             let mut unused: HashSet<usize> = page.iter().copied().collect();
@@ -112,6 +77,25 @@ fn parse_input(input: &str) -> (HashMap<usize, HashSet<usize>>, Vec<Vec<usize>>)
         })
         .collect();
     return (ordering_rules, pages_produced);
+}
+
+fn is_valid_page(page: &Vec<usize>, rules: &HashMap<usize, HashSet<usize>>) -> bool {
+    let existing: HashSet<usize> = page.iter().copied().collect();
+    page.iter()
+        .scan(HashSet::new(), |seen, current| {
+            let mut valid = true;
+            if let Some(pre) = rules.get(current) {
+                valid = seen.is_superset(
+                    &existing
+                        .intersection(pre)
+                        .copied()
+                        .collect::<HashSet<usize>>(),
+                );
+            }
+            seen.insert(*current);
+            Some(valid)
+        })
+        .all(|b| b)
 }
 
 // check if a is dependent on b, based on the ordering rules
