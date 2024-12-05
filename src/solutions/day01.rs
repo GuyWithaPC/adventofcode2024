@@ -1,4 +1,3 @@
-
 crate::day!("Historian Hysteria");
 
 use itertools::Itertools;

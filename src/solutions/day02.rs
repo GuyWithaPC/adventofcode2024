@@ -1,12 +1,15 @@
-
 crate::day!("Red-Nosed Reports");
 
 fn part_1(data: &str) -> usize {
-    data.lines().filter(|&r| is_safe(&parse_report(r))).count()
+    data.lines()
+        .filter(|&r| is_safe_simple(&parse_report(r)))
+        .count()
 }
 
 fn part_2(data: &str) -> usize {
-    data.lines().filter(|&r| is_safe_dampener(&parse_report(r))).count()
+    data.lines()
+        .filter(|&r| is_safe_dampener(&parse_report(r)))
+        .count()
 }
 
 fn parse_report(report: &str) -> Vec<isize> {
@@ -23,33 +26,43 @@ fn check_diff(prev: isize, current: isize, total_diff: isize) -> bool {
         || (total_diff.signum() != 0 && diff.signum() != total_diff.signum()));
 }
 
-fn is_safe(report: &Vec<isize>) -> bool {
-    let mut prev: Option<isize> = None;
-    let mut total_diff: isize = 0;
-    for n in report {
-        if let Some(m) = prev {
-            if !check_diff(m, *n, total_diff) {
-                return false;
-            }
-            prev = Some(*n);
-            total_diff += n - m;
-        } else {
-            prev = Some(*n);
-        }
+fn is_safe_simple(report: &Vec<isize>) -> bool {
+    match is_safe(report) {
+        Ok(_) => true,
+        Err(_) => false,
     }
-    return true;
+}
+
+fn is_safe(report: &Vec<isize>) -> Result<(), usize> {
+    let mut report_iter = report.iter();
+    let first = *report_iter.by_ref().next().unwrap();
+    let correct = report_iter
+        .scan((first, 0), |(prev, total_diff), &current| {
+            if !check_diff(*prev, current, *total_diff) {
+                return None;
+            }
+            *total_diff += current - *prev;
+            *prev = current;
+            return Some(());
+        })
+        .count();
+    if correct == report.len() - 1 {
+        Ok(())
+    } else {
+        Err(correct)
+    }
 }
 
 fn is_safe_dampener(report: &Vec<isize>) -> bool {
-    if is_safe(report) {
-        return true;
+    match is_safe(report) {
+        Ok(_) => true,
+        Err(idx) => ((idx.checked_sub(1).unwrap_or(0))..(std::cmp::min(idx + 2, report.len())))
+            .into_iter()
+            .map(|i| {
+                let mut mod_report = report.clone();
+                mod_report.remove(i);
+                is_safe_simple(&mod_report)
+            })
+            .any(|b| b),
     }
-    for n in 0..report.len() {
-        let mut mod_report = report.clone();
-        mod_report.remove(n);
-        if is_safe(&mod_report) {
-            return true;
-        }
-    }
-    return false;
 }
