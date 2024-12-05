@@ -1,4 +1,3 @@
-
 fn parse_report(report: &str) -> Vec<isize> {
     report
         .split(" ")

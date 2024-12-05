@@ -2,6 +2,23 @@ use itertools::Itertools;
 
 crate::day!("Historian Hysteria");
 
+fn part_1(data: &str) -> isize {
+    let (mut list_a, mut list_b) = split_lists(data);
+    list_a.sort();
+    list_b.sort();
+    list_a
+        .iter()
+        .zip(list_b.iter())
+        .fold(0isize, |acc, (&a, &b)| acc + (a - b).abs())
+}
+
+fn part_2(data: &str) -> isize {
+    let (left, right) = split_lists(data);
+    left.iter().unique().fold(0, |acc, current| {
+        acc + (right.iter().filter(|&x| x.eq(current)).count() as isize) * *current
+    })
+}
+
 fn split_lists(data: &str) -> (Vec<isize>, Vec<isize>) {
     let mut list_a = Vec::new();
     let mut list_b = Vec::new();
@@ -17,18 +34,4 @@ fn split_lists(data: &str) -> (Vec<isize>, Vec<isize>) {
         );
     }
     return (list_a, list_b);
-}
-
-fn part_1(data: &str) -> isize {
-    let (mut list_a, mut list_b) = split_lists(data);
-    list_a.sort();
-    list_b.sort();
-    list_a.iter().zip(list_b.iter()).fold(0isize, |acc, (&a, &b)| acc + (a - b).abs())
-}
-
-fn part_2(data: &str) -> isize {
-    let (left, right) = split_lists(data);
-    left.iter().unique().fold(0, |acc, current| {
-        acc + (right.iter().filter(|&x| x.eq(current)).count() as isize) * *current
-    })
 }
