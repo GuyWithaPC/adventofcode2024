@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+use itertools::Itertools;
+
 crate::day!("Ceres Search" => {
     part_1,
     part_2
@@ -8,36 +10,28 @@ crate::day!("Ceres Search" => {
 fn part_1(data: &str) -> usize {
     let grid = file_to_grid(data);
     let (rows, cols) = file_grid_size(data);
-    let mut count = 0;
-    for y in 0..rows {
-        for x in 0..cols {
-            if grid[&(y, x)] == 'X' {
-                count += follow_xmas(
+    (0..rows)
+        .cartesian_product(0..cols)
+        .filter(|(y, x)| grid[&(*y, *x)] == 'X')
+        .fold(0, |count, (y, x)| {
+            count
+                + follow_xmas(
                     &grid,
                     (y.try_into().unwrap(), x.try_into().unwrap()),
                     (0, 0),
                     'X',
-                );
-            }
-        }
-    }
-    return count;
+                )
+        })
 }
 
 fn part_2(data: &str) -> usize {
     let grid = file_to_grid(data);
     let (rows, cols) = file_grid_size(data);
-    let mut count = 0;
-    for y in 0..rows {
-        for x in 0..cols {
-            if grid[&(y, x)] == 'A'
-                && is_xmas(&grid, (y.try_into().unwrap(), x.try_into().unwrap()))
-            {
-                count += 1;
-            }
-        }
-    }
-    return count;
+    (0..rows)
+        .cartesian_product(0..cols)
+        .filter(|(y, x)| grid[&(*y, *x)] == 'A')
+        .filter(|(y, x)| is_xmas(&grid, ((*y).try_into().unwrap(), (*x).try_into().unwrap())))
+        .count()
 }
 
 fn file_grid_size(data: &str) -> (usize, usize) {
@@ -75,16 +69,12 @@ fn follow_xmas(
     if let Some(check_char) = next_xmas(last_char) {
         if dir == (0, 0) {
             // check all directions
-            let mut count = 0;
-            for x in -1..=1 {
-                for y in -1..=1 {
-                    if x == y && y == 0 {
-                        continue;
-                    }
-                    count += follow_xmas(grid, loc, (y, x), last_char);
-                }
-            }
-            count
+            (-1..=1)
+                .cartesian_product(-1..=1)
+                .filter(|(x, y)| *y != 0 || *x != 0)
+                .fold(0, |count, (x, y)| {
+                    count + follow_xmas(grid, loc, (y, x), last_char)
+                })
         } else {
             // check just 1 direction
             let (y, x) = (loc.0 + dir.0, loc.1 + dir.1);
