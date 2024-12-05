@@ -1,4 +1,6 @@
-use std::collections::HashSet;
+use itertools::Itertools;
+
+crate::day!("Historian Hysteria");
 
 fn split_lists(data: &str) -> (Vec<isize>, Vec<isize>) {
     let mut list_a = Vec::new();
@@ -17,31 +19,16 @@ fn split_lists(data: &str) -> (Vec<isize>, Vec<isize>) {
     return (list_a, list_b);
 }
 
-fn part_1(data: &str) {
+fn part_1(data: &str) -> isize {
     let (mut list_a, mut list_b) = split_lists(data);
     list_a.sort();
     list_b.sort();
-    let mut total_distance = 0;
-    for i in 0..list_a.len() {
-        total_distance += (list_a[i] - list_b[i]).abs();
-    }
-    println!("Total difference: {total_distance}")
+    list_a.iter().zip(list_b.iter()).fold(0isize, |acc, (&a, &b)| acc + (a - b).abs())
 }
 
-fn part_2(data: &str) {
+fn part_2(data: &str) -> isize {
     let (left, right) = split_lists(data);
-    let mut left_values: HashSet<isize> = HashSet::new();
-    for n in &left {
-        left_values.insert(*n);
-    }
-    let result: isize = right.into_iter().filter(|x| left_values.contains(x)).sum();
-    println!("Similarity score: {result}");
-}
-
-pub fn main(input: &str) {
-    println!("--- Day 1: Historian Hysteria ---");
-    println!("Part 1:");
-    part_1(input);
-    println!("Part 2:");
-    part_2(input);
+    left.iter().unique().fold(0, |acc, current| {
+        acc + (right.iter().filter(|&x| x.eq(current)).count() as isize) * *current
+    })
 }
