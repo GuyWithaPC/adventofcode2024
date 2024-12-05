@@ -27,6 +27,10 @@ pub fn run_day(input_dir: &str, day: u32) -> Result<(), Error> {
             solutions::day04::main(input_dir);
             Ok(())
         }
+        5 => {
+            solutions::day05::main(input_dir);
+            Ok(())
+        }
         _ => Err(Error::DayNotImplemented(day)),
     }
 }
