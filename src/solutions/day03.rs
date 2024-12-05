@@ -1,60 +1,37 @@
+crate::day!("Mull It Over");
+
 use regex::Regex;
 
-fn strtup_to_int(strtup: &str) -> (isize, isize) {
-    let strnums = strtup.split_once(",").unwrap();
-    return (
-        isize::from_str_radix(strnums.0, 10).unwrap(),
-        isize::from_str_radix(strnums.1, 10).unwrap(),
-    );
+fn part_1(data: &str) -> usize {
+    let mul_matcher = Regex::new(r"mul\((\d+),(\d+)\)").unwrap();
+    mul_matcher.captures_iter(data).fold(0, |sum, capture| {
+        let (_, [a, b]) = capture.extract();
+        sum + a.parse::<usize>().unwrap() * b.parse::<usize>().unwrap()
+    })
 }
 
-fn part_1(data: &str) {
-    let mul_matcher = Regex::new(r"mul\((\d+,\d+)\)").unwrap();
-    let mul_instrs: Vec<(isize, isize)> = mul_matcher
+fn part_2(data: &str) -> usize {
+    let instr_matcher = Regex::new(r"(mul\((\d+),(\d+)\)|do\(\)|don't\(\))").unwrap();
+    instr_matcher
         .captures_iter(data)
-        .map(|tuple| {
-            let (_, [nums]) = tuple.extract();
-            return strtup_to_int(nums);
-        })
-        .collect();
-    let result: isize = mul_instrs.iter().map(|(x, y)| x * y).sum();
-    println!("added results: {result}");
-}
-
-fn part_2(data: &str) {
-    let instr_matcher = Regex::new(r"(mul|don't|do)\((\d+,\d+|)\)").unwrap();
-    let instrs: Vec<(isize, isize)> = instr_matcher
-        .captures_iter(data)
-        .scan(true, |enabled, instr| {
-            let (_, [func, nums]) = instr.extract();
-            match func {
+        .scan(true, |enabled, capture| {
+            Some(match capture[1].split_once("(").unwrap().0 {
                 "mul" => {
                     if *enabled {
-                        Some(strtup_to_int(nums))
+                        capture[2].parse::<usize>().unwrap() * capture[3].parse::<usize>().unwrap()
                     } else {
-                        Some((0, 0))
+                        0
                     }
                 }
                 "do" => {
                     *enabled = true;
-                    Some((0, 0))
+                    0
                 }
                 _ => {
-                    // this is the "don't" branch
                     *enabled = false;
-                    Some((0, 0))
+                    0
                 }
-            }
+            })
         })
-        .collect();
-    let result: isize = instrs.iter().map(|(x, y)| x * y).sum();
-    println!("added results: {result}");
-}
-
-pub fn main(input: &str) {
-    println!("--- Day 3: Mull It Over ---");
-    println!("Part 1:");
-    part_1(input);
-    println!("Part 2:");
-    part_2(input);
+        .sum()
 }
