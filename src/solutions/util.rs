@@ -1,6 +1,16 @@
+
 #[macro_export]
 macro_rules! day {
     ($title:literal) => {
+        struct Day;
+        trait Part1 {
+            type Output;
+            fn run(data: &str) -> Self::Output;
+        }
+        trait Part2 {
+            type Output;
+            fn run(data: &str) -> Self::Output;
+        }
         pub fn main(input: &str) {
             use regex::Regex;
             use std::file;
@@ -16,8 +26,8 @@ macro_rules! day {
                 day_no.parse::<usize>().unwrap(),
                 $title
             );
-            println!("Part 1: {}", part_1(input));
-            println!("Part 2: {}", part_2(input));
+            println!("Part 1: {:#?}", <Day as Part1>::run(input));
+            println!("Part 2: {:#?}", <Day as Part2>::run(input));
         }
     };
 }
