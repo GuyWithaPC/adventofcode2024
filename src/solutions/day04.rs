@@ -97,7 +97,7 @@ fn is_xmas(grid: &HashMap<(usize, usize), char>, loc: (isize, isize)) -> bool {
         .collect::<Option<Vec<usize>>>()
     {
         if pattern.len() != 4 || pattern.iter().fold(0usize, |sum, x| sum + *x) != 2usize {
-            return false
+            return false;
         }
         match (pattern[0], pattern[1], pattern[2], pattern[3]) {
             (0, 1, 1, 0) => false,
