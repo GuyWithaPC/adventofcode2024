@@ -23,7 +23,8 @@ impl Part2 for Day {
                 Some(match capture[1].split_once("(").unwrap().0 {
                     "mul" => {
                         if *enabled {
-                            capture[2].parse::<usize>().unwrap() * capture[3].parse::<usize>().unwrap()
+                            capture[2].parse::<usize>().unwrap()
+                                * capture[3].parse::<usize>().unwrap()
                         } else {
                             0
                         }

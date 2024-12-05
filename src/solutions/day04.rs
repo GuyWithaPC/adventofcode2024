@@ -1,4 +1,47 @@
+crate::day!("Ceres Search");
+
 use std::collections::HashMap;
+
+impl Part1 for Day {
+    type Output = usize;
+    fn run(data: &str) -> usize {
+        let grid = file_to_grid(data);
+        let (rows, cols) = file_grid_size(data);
+        let mut count = 0;
+        for y in 0..rows {
+            for x in 0..cols {
+                if grid[&(y, x)] == 'X' {
+                    count += follow_xmas(
+                        &grid,
+                        (y.try_into().unwrap(), x.try_into().unwrap()),
+                        (0, 0),
+                        'X',
+                    );
+                }
+            }
+        }
+        return count;
+    }
+}
+
+impl Part2 for Day {
+    type Output = usize;
+    fn run(data: &str) -> usize {
+        let grid = file_to_grid(data);
+        let (rows, cols) = file_grid_size(data);
+        let mut count = 0;
+        for y in 0..rows {
+            for x in 0..cols {
+                if grid[&(y, x)] == 'A'
+                    && is_xmas(&grid, (y.try_into().unwrap(), x.try_into().unwrap()))
+                {
+                    count += 1;
+                }
+            }
+        }
+        return count;
+    }
+}
 
 fn file_grid_size(data: &str) -> (usize, usize) {
     (data.lines().count(), data.lines().next().unwrap().len())
@@ -59,25 +102,6 @@ fn follow_xmas(
     }
 }
 
-fn part_1(data: &str) {
-    let grid = file_to_grid(data);
-    let (rows, cols) = file_grid_size(data);
-    let mut count = 0;
-    for y in 0..rows {
-        for x in 0..cols {
-            if grid[&(y, x)] == 'X' {
-                count += follow_xmas(
-                    &grid,
-                    (y.try_into().unwrap(), x.try_into().unwrap()),
-                    (0, 0),
-                    'X',
-                );
-            }
-        }
-    }
-    println!("Number of XMAS: {count}");
-}
-
 fn is_xmas(grid: &HashMap<(usize, usize), char>, loc: (isize, isize)) -> bool {
     if let Some(pattern) = [(-1, -1), (-1, 1), (1, -1), (1, 1)]
         .iter()
@@ -105,28 +129,4 @@ fn is_xmas(grid: &HashMap<(usize, usize), char>, loc: (isize, isize)) -> bool {
     } else {
         false
     }
-}
-
-fn part_2(data: &str) {
-    let grid = file_to_grid(data);
-    let (rows, cols) = file_grid_size(data);
-    let mut count = 0;
-    for y in 0..rows {
-        for x in 0..cols {
-            if grid[&(y, x)] == 'A'
-                && is_xmas(&grid, (y.try_into().unwrap(), x.try_into().unwrap()))
-            {
-                count += 1;
-            }
-        }
-    }
-    println!("Number of X-MAS: {count}");
-}
-
-pub fn main(input: &str) {
-    println!("--- Day 4: Ceres Search ---");
-    println!("Part 1:");
-    part_1(input);
-    println!("Part 2:");
-    part_2(input);
 }
