@@ -1,6 +1,7 @@
-use itertools::Itertools;
 
 crate::day!("Historian Hysteria");
+
+use itertools::Itertools;
 
 fn part_1(data: &str) -> isize {
     let (mut list_a, mut list_b) = split_lists(data);

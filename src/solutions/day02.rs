@@ -1,3 +1,14 @@
+
+crate::day!("Red-Nosed Reports");
+
+fn part_1(data: &str) -> usize {
+    data.lines().filter(|&r| is_safe(&parse_report(r))).count()
+}
+
+fn part_2(data: &str) -> usize {
+    data.lines().filter(|&r| is_safe_dampener(&parse_report(r))).count()
+}
+
 fn parse_report(report: &str) -> Vec<isize> {
     report
         .split(" ")
@@ -41,34 +52,4 @@ fn is_safe_dampener(report: &Vec<isize>) -> bool {
         }
     }
     return false;
-}
-
-fn part_1(data: &str) {
-    let mut safe = 0;
-    for report in data.lines() {
-        let parsed_report = parse_report(report);
-        if is_safe(&parsed_report) {
-            safe += 1
-        }
-    }
-    println!("Safe reports: {safe}");
-}
-
-fn part_2(data: &str) {
-    let mut safe = 0;
-    for report in data.lines() {
-        let parsed_report = parse_report(report);
-        if is_safe_dampener(&parsed_report) {
-            safe += 1
-        }
-    }
-    println!("Safe reports: {safe}");
-}
-
-pub fn main(input: &str) {
-    println!("--- Day 2: Red-Nosed Reports ---");
-    println!("Part 1:");
-    part_1(input);
-    println!("Part 2:");
-    part_2(input);
 }
