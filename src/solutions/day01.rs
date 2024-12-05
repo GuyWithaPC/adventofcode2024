@@ -1,7 +1,5 @@
 use std::collections::HashSet;
 
-use crate::input;
-
 fn split_lists(data: &str) -> (Vec<isize>, Vec<isize>) {
     let mut list_a = Vec::new();
     let mut list_b = Vec::new();
@@ -40,11 +38,10 @@ fn part_2(data: &str) {
     println!("Similarity score: {result}");
 }
 
-pub fn main(input_dir: &str) {
+pub fn main(input: &str) {
     println!("--- Day 1: Historian Hysteria ---");
-    let data = input::load(input_dir, 1, None);
     println!("Part 1:");
-    part_1(&data);
+    part_1(input);
     println!("Part 2:");
-    part_2(&data);
+    part_2(input);
 }

@@ -1,7 +1,5 @@
 use regex::Regex;
 
-use crate::input;
-
 fn strtup_to_int(strtup: &str) -> (isize, isize) {
     let strnums = strtup.split_once(",").unwrap();
     return (
@@ -53,11 +51,10 @@ fn part_2(data: &str) {
     println!("added results: {result}");
 }
 
-pub fn main(input_dir: &str) {
+pub fn main(input: &str) {
     println!("--- Day 3: Mull It Over ---");
-    let data = input::load(input_dir, 3, None);
     println!("Part 1:");
-    part_1(&data);
+    part_1(input);
     println!("Part 2:");
-    part_2(&data);
+    part_2(input);
 }

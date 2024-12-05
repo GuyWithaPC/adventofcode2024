@@ -1,7 +1,5 @@
 use std::collections::{HashMap, HashSet};
 
-use crate::input;
-
 fn parse_input(input: &str) -> (HashMap<usize, HashSet<usize>>, Vec<Vec<usize>>) {
     let mut lines = input.lines();
     let x_y_pairs: Vec<(usize, usize)> = lines
@@ -121,11 +119,10 @@ fn part_2(data: &str) {
     println!("Reordered: {reordered}");
 }
 
-pub fn main(input_dir: &str) {
+pub fn main(input: &str) {
     println!("--- Day 5: ---");
-    let data = input::load(input_dir, 5, None);
     println!("Part 1:");
-    part_1(&data);
+    part_1(input);
     println!("Part 2:");
-    part_2(&data);
+    part_2(input);
 }

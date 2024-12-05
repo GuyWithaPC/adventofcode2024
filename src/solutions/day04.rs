@@ -1,7 +1,5 @@
 use std::collections::HashMap;
 
-use crate::input;
-
 fn file_grid_size(data: &str) -> (usize, usize) {
     (data.lines().count(), data.lines().next().unwrap().len())
 }
@@ -125,11 +123,10 @@ fn part_2(data: &str) {
     println!("Number of X-MAS: {count}");
 }
 
-pub fn main(input_dir: &str) {
+pub fn main(input: &str) {
     println!("--- Day 4: Ceres Search ---");
-    let data = input::load(input_dir, 4, None);
     println!("Part 1:");
-    part_1(&data);
+    part_1(input);
     println!("Part 2:");
-    part_2(&data);
+    part_2(input);
 }

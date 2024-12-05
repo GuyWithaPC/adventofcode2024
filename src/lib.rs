@@ -12,23 +12,23 @@ pub enum Error {
 pub fn run_day(input_dir: &str, day: u32) -> Result<(), Error> {
     match day {
         1 => {
-            solutions::day01::main(input_dir);
+            solutions::day01::main(&input::load(input_dir, 1));
             Ok(())
         }
         2 => {
-            solutions::day02::main(input_dir);
+            solutions::day02::main(&input::load(input_dir, 2));
             Ok(())
         }
         3 => {
-            solutions::day03::main(input_dir);
+            solutions::day03::main(&input::load(input_dir, 3));
             Ok(())
         }
         4 => {
-            solutions::day04::main(input_dir);
+            solutions::day04::main(&input::load(input_dir, 4));
             Ok(())
         }
         5 => {
-            solutions::day05::main(input_dir);
+            solutions::day05::main(&input::load(input_dir, 5));
             Ok(())
         }
         _ => Err(Error::DayNotImplemented(day)),

@@ -1,4 +1,3 @@
-use crate::input;
 
 fn parse_report(report: &str) -> Vec<isize> {
     report
@@ -67,11 +66,10 @@ fn part_2(data: &str) {
     println!("Safe reports: {safe}");
 }
 
-pub fn main(input_dir: &str) {
+pub fn main(input: &str) {
     println!("--- Day 2: Red-Nosed Reports ---");
-    let data = input::load(input_dir, 2, None);
     println!("Part 1:");
-    part_1(&data);
+    part_1(input);
     println!("Part 2:");
-    part_2(&data);
+    part_2(input);
 }
