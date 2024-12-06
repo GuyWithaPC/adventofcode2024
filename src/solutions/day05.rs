@@ -1,5 +1,5 @@
-use std::collections::{HashMap, HashSet};
 use crate::util::iterators::TruthChecks;
+use std::collections::{HashMap, HashSet};
 
 crate::day!("Print Queue" => {
     part_1,

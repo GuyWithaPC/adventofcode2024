@@ -35,8 +35,10 @@ fn part_1(data: &str) -> usize {
 }
 
 fn part_2(data: &str) -> usize {
-    let map = parse_input(data);
-    let mut pos = get_initial_guard_position(&map);
+    let mut map = parse_input(data);
+    let mut new_obstacles: HashSet<Position> = HashSet::new();
+    let guard_position = get_initial_guard_position(&map);
+    let mut pos = guard_position;
     let mut dir = Direction::up();
     let mut positions: HashSet<Position> = HashSet::new();
     positions.insert(pos);
@@ -50,51 +52,54 @@ fn part_2(data: &str) -> usize {
                 pos = pos + dir;
             }
         }
-        positions.insert(pos);
-    }
-    let mut new_obstacles: HashSet<Position> = HashSet::new();
-    let guard_position = get_initial_guard_position(&map);
-    for pos in positions {
-        if pos == guard_position {
-            continue;
-        }
-        if can_loop(pos, &map) {
+        if can_loop(pos, dir, &positions, &mut map) {
             new_obstacles.insert(pos + dir);
         }
+        positions.insert(pos);
     }
     new_obstacles.len()
 }
 
-/// check whether inserting an obstacle at the given position creates a loop
-fn can_loop(pos: Position, map: &Grid) -> bool {
-    let mut test_map = map.clone();
-    test_map.insert(pos, Token::Obstacle);
-    let mut pos = get_initial_guard_position(map);
-    let mut dir = Direction::up();
-    let mut visited: HashSet<Position> = HashSet::new();
-    let mut consecutive_repeats = 0;
-    visited.insert(pos);
-    loop {
-        match test_map.get(&(pos + dir)) {
+/// check whether inserting an obstacle in front of the given position creates a loop
+fn can_loop(
+    mut pos: Position,
+    mut dir: Direction,
+    already_seen: &HashSet<Position>,
+    map: &mut Grid,
+) -> bool {
+    match map.get(&(pos + dir)) {
+        Some(Token::Empty) => {}
+        _ => {
+            return false;
+        }
+    };
+    let test_pos = pos + dir;
+    map.insert(test_pos, Token::Obstacle);
+    if already_seen.contains(&(pos + dir)) {
+        pos = get_initial_guard_position(map);
+        dir = Direction::up();
+    }
+    let mut visited: HashSet<(Position, Direction)> = HashSet::new();
+    let mut is_loop = false;
+    'outer: loop {
+        match map.get(&(pos + dir)) {
             Some(Token::Obstacle) => {
                 dir = dir.rotate_right();
             }
             None => {
-                return false;
+                break 'outer;
             }
             _ => {
                 pos = pos + dir;
-                if !visited.insert(pos) {
-                    consecutive_repeats += 1;
-                    if consecutive_repeats == visited.len() {
-                        return true;
-                    }
-                } else {
-                    consecutive_repeats = 0;
+                if !visited.insert((pos, dir)) {
+                    is_loop = true;
+                    break 'outer;
                 }
             }
         }
     }
+    map.insert(test_pos, Token::Empty);
+    return is_loop;
 }
 
 fn get_initial_guard_position(map: &Grid) -> Position {
