@@ -1,7 +1,5 @@
-use std::{
-    collections::{HashMap, HashSet},
-    ops::Add,
-};
+use crate::util::grid_positions::{Direction, Position};
+use std::collections::{HashMap, HashSet};
 
 crate::day!("Guard Gallivant" => {
     part_1,
@@ -10,27 +8,22 @@ crate::day!("Guard Gallivant" => {
 
 type Grid = HashMap<Position, Token>;
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-struct Position(isize, isize); // col, row format
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-struct Direction(isize, isize); // col, row format
-
-impl Add<Direction> for Position {
-    type Output = Position;
-    fn add(self, rhs: Direction) -> Position {
-        return Position(self.0 + rhs.0, self.1 + rhs.1);
-    }
+#[derive(Clone, Copy, Debug)]
+enum Token {
+    Empty,
+    Obstacle,
+    Guard,
 }
 
 fn part_1(data: &str) -> usize {
     let map = parse_input(data);
     let mut pos = get_initial_guard_position(&map);
-    let mut dir = Direction(0, -1);
+    let mut dir = Direction::up();
     let mut positions: HashSet<Position> = HashSet::new();
     positions.insert(pos);
     'outer: loop {
         match map.get(&(pos + dir)) {
-            Some(Token::Obstacle) => dir = dir.rotate(),
+            Some(Token::Obstacle) => dir = dir.rotate_right(),
             None => break 'outer,
             _ => {
                 pos = pos + dir;
@@ -44,13 +37,13 @@ fn part_1(data: &str) -> usize {
 fn part_2(data: &str) -> usize {
     let map = parse_input(data);
     let mut pos = get_initial_guard_position(&map);
-    let mut dir = Direction(0, -1);
+    let mut dir = Direction::up();
     let mut positions: HashSet<Position> = HashSet::new();
     positions.insert(pos);
     'outer: loop {
         match map.get(&(pos + dir)) {
             Some(Token::Obstacle) => {
-                dir = dir.rotate();
+                dir = dir.rotate_right();
             }
             None => break 'outer,
             _ => {
@@ -72,19 +65,19 @@ fn part_2(data: &str) -> usize {
     new_obstacles.len()
 }
 
-// check whether there's a loopable spot to the right
+/// check whether inserting an obstacle at the given position creates a loop
 fn can_loop(pos: Position, map: &Grid) -> bool {
     let mut test_map = map.clone();
     test_map.insert(pos, Token::Obstacle);
     let mut pos = get_initial_guard_position(map);
-    let mut dir = Direction(0, -1);
+    let mut dir = Direction::up();
     let mut visited: HashSet<Position> = HashSet::new();
     let mut consecutive_repeats = 0;
     visited.insert(pos);
     loop {
         match test_map.get(&(pos + dir)) {
             Some(Token::Obstacle) => {
-                dir = dir.rotate();
+                dir = dir.rotate_right();
             }
             None => {
                 return false;
@@ -114,35 +107,17 @@ fn get_initial_guard_position(map: &Grid) -> Position {
         .unwrap()
 }
 
-#[derive(Clone, Copy, Debug)]
-enum Token {
-    Empty,
-    Obstacle,
-    Guard,
-}
-
 fn parse_input(input: &str) -> Grid {
     input
         .lines()
         .enumerate()
         .map(|(row, l)| {
             l.chars().enumerate().map(move |(col, c)| match c {
-                '#' => (Position(col as isize, row as isize), Token::Obstacle),
-                '^' => (Position(col as isize, row as isize), Token::Guard), // guard facing up
-                _ => (Position(col as isize, row as isize), Token::Empty),
+                '#' => (Position::new(col as isize, row as isize), Token::Obstacle),
+                '^' => (Position::new(col as isize, row as isize), Token::Guard), // guard facing up
+                _ => (Position::new(col as isize, row as isize), Token::Empty),
             })
         })
         .flatten()
         .collect()
-}
-
-impl Direction {
-    fn rotate(&self) -> Direction {
-        match self {
-            Direction(0, -1) => Direction(1, 0),
-            Direction(1, 0) => Direction(0, 1),
-            Direction(0, 1) => Direction(-1, 0),
-            _ => Direction(0, -1),
-        }
-    }
 }

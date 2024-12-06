@@ -1,5 +1,6 @@
 mod input;
 pub mod solutions;
+pub mod util;
 
 use thiserror::Error;
 
