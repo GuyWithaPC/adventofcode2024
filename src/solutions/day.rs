@@ -78,7 +78,9 @@ macro_rules! day {
                 day_no.parse::<usize>().unwrap(),
                 $title
             );
-            let bar_style = ProgressStyle::with_template("{prefix}{bar:20} [{elapsed_precise} / {duration_precise}]").unwrap();
+            let bar_space = format!("--- Day {}: {} ---", day_no.parse::<usize>().unwrap(), $title).len() - "Part 1: []".len();
+            let bar_style = ProgressStyle::with_template(format!("{{prefix}}[{{bar:{bar_space}.cyan}}] [{{elapsed_precise}} / {{duration_precise}}]").as_str()).unwrap()
+                .progress_chars("#>-");
             let bar = ProgressBar::with_draw_target(None, ProgressDrawTarget::stdout());
             bar.set_style(bar_style.clone());
             bar.set_prefix("Part 1: ");
@@ -110,7 +112,9 @@ macro_rules! day {
                 day_no.parse::<usize>().unwrap(),
                 $title
             );
-            let bar_style = ProgressStyle::with_template("{prefix}{bar:20} [{elapsed_precise} / {duration_precise}]").unwrap();
+            let bar_space = format!("--- Day {}: {} ---", day_no.parse::<usize>().unwrap(), $title).len() - "Part 1: []".len();
+            let bar_style = ProgressStyle::with_template(format!("{{prefix}}[{{bar:{bar_space}.cyan}}] [{{elapsed_precise}} / {{duration_precise}}]").as_str()).unwrap()
+                .progress_chars("#>-");
             let bar = ProgressBar::with_draw_target(None, ProgressDrawTarget::stdout());
             bar.set_style(bar_style);
             bar.set_prefix("Part 1: ");
