@@ -1,7 +1,9 @@
+use indicatif::ProgressBar;
+
 use crate::util::grid_positions::{Direction, Position};
 use std::collections::{HashMap, HashSet};
 
-crate::day!("Guard Gallivant" => {
+crate::day!("Guard Gallivant" + bars => {
     part_1,
     part_2
 });
@@ -15,7 +17,7 @@ enum Token {
     Guard,
 }
 
-fn part_1(data: &str) -> usize {
+fn part_1(data: &str, _: &ProgressBar) -> usize {
     let map = parse_input(data);
     let mut pos = get_initial_guard_position(&map);
     let mut dir = Direction::up();
@@ -34,7 +36,8 @@ fn part_1(data: &str) -> usize {
     positions.len()
 }
 
-fn part_2(data: &str) -> usize {
+fn part_2(data: &str, bar: &ProgressBar) -> usize {
+    bar.set_length(part_1(data, bar) as u64);
     let mut map = parse_input(data);
     let mut new_obstacles: HashSet<Position> = HashSet::new();
     let guard_position = get_initial_guard_position(&map);
@@ -56,6 +59,7 @@ fn part_2(data: &str) -> usize {
             new_obstacles.insert(pos + dir);
         }
         positions.insert(pos);
+        bar.inc(1);
     }
     new_obstacles.len()
 }
