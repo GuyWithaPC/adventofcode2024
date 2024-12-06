@@ -39,4 +39,22 @@ macro_rules! day {
             println!("Part 1: {:#?}", $p1(input));
         }
     };
+    ($title:literal => {}) => {
+        pub fn main(_input: &str) {
+            use regex::Regex;
+            use std::file;
+            let day_no = Regex::new(r"day(\d+).rs")
+                .unwrap()
+                .captures(file!())
+                .unwrap()
+                .get(1)
+                .unwrap()
+                .as_str();
+            println!(
+                "--- Day {}: {} ---",
+                day_no.parse::<usize>().unwrap(),
+                $title
+            );
+        }
+    };
 }
