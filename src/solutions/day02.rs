@@ -1,3 +1,5 @@
+use crate::util::iterators::TruthChecks;
+
 crate::day!("Red-Nosed Reports" => {
     part_1,
     part_2
@@ -66,6 +68,6 @@ fn is_safe_dampener(report: &Vec<isize>) -> bool {
                 mod_report.remove(i);
                 is_safe_simple(&mod_report)
             })
-            .any(|b| b),
+            .any_true(),
     }
 }

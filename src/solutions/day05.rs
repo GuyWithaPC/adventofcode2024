@@ -1,4 +1,5 @@
 use std::collections::{HashMap, HashSet};
+use crate::util::iterators::TruthChecks;
 
 crate::day!("Print Queue" => {
     part_1,
@@ -35,7 +36,7 @@ fn part_2(data: &str) -> usize {
                                     is_dependent(b, a, &ordering_rules)
                                 }
                             })
-                            .any(|b| b)
+                            .any_true()
                     })
                     .copied()
                     .next()
@@ -95,7 +96,7 @@ fn is_valid_page(page: &Vec<usize>, rules: &HashMap<usize, HashSet<usize>>) -> b
             seen.insert(*current);
             Some(valid)
         })
-        .all(|b| b)
+        .all_true()
 }
 
 // check if a is dependent on b, based on the ordering rules
