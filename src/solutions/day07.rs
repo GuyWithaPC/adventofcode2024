@@ -64,7 +64,7 @@ fn parse_input(input: &str) -> Vec<(usize, Vec<usize>)> {
 }
 
 #[cfg(test)]
-mod day07_tests {
+mod test {
     use super::*;
 
     const TEST: &str = "\
