@@ -1,4 +1,3 @@
-
 #[macro_export]
 macro_rules! day {
     ($title:literal => {$p1:ident,$p2:ident}) => {

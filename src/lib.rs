@@ -25,6 +25,7 @@ pub fn run_day(input_dir: &str, day: u32) -> Result<(), Error> {
         4 => do_day!(day04, &input::load(input_dir, 4)),
         5 => do_day!(day05, &input::load(input_dir, 5)),
         6 => do_day!(day06, &input::load(input_dir, 6)),
+        7 => do_day!(day07, &input::load(input_dir, 7)),
         _ => Err(Error::DayNotImplemented(day)),
     }
 }
