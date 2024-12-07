@@ -1,13 +1,15 @@
+use indicatif::ProgressBar;
 use itertools::Itertools;
 use itertools::repeat_n;
 
-crate::day!("Bridge Repair" => {
+crate::day!("Bridge Repair" + bars => {
     part_1,
     part_2
 });
 
-fn part_1(data: &str) -> usize {
-    parse_input(data).iter().filter(|(test_value, values)| {
+fn part_1(data: &str, _: &ProgressBar) -> usize {
+    let data = parse_input(data);
+    data.iter().filter(|(test_value, values)| {
         repeat_n(vec![Operator::Mul,Operator::Add].iter(), values.len() - 1)
             .multi_cartesian_product()
             .map(|ops| apply_operators(values, ops))
@@ -15,8 +17,11 @@ fn part_1(data: &str) -> usize {
     }).fold(0, |acc, (test_value, _)| acc + *test_value)
 }
 
-fn part_2(data: &str) -> usize {
-    parse_input(data).iter().filter(|(test_value, values)| {
+fn part_2(data: &str, bar: &ProgressBar) -> usize {
+    let data = parse_input(data);
+    bar.set_length(data.len() as u64);
+    data.iter().filter(|(test_value, values)| {
+        bar.inc(1);
         repeat_n(vec![Operator::Mul,Operator::Add,Operator::Con].iter(), values.len() - 1)
             .multi_cartesian_product()
             .map(|ops| apply_operators(values, ops))
@@ -62,7 +67,7 @@ fn parse_input(input: &str) -> Vec<(usize, Vec<usize>)> {
 mod day07_tests {
     use super::*;
 
-    const P1_TEST: &str = "\
+    const TEST: &str = "\
 190: 10 19
 3267: 81 40 27
 83: 17 5
@@ -75,11 +80,11 @@ mod day07_tests {
 
     #[test]
     fn p1_test() {
-        assert_eq!(part_1(P1_TEST), 3749);
+        assert_eq!(part_1(TEST, &ProgressBar::hidden()), 3749);
     }
 
     #[test]
     fn p2_test() {
-        assert_eq!(part_2(P1_TEST), 11387);
+        assert_eq!(part_2(TEST, &ProgressBar::hidden()), 11387);
     }
 }
