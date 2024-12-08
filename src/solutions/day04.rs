@@ -117,3 +117,22 @@ fn is_xmas(grid: &HashMap<(usize, usize), char>, loc: (isize, isize)) -> bool {
         false
     }
 }
+
+crate::test_day!(
+"
+MMMSXXMASM
+MSAMXMSMSA
+AMXSXMAAMM
+MSAMASMSMX
+XMASAMXAMM
+XXAMMXXAMA
+SMSMSASXSS
+SAXAMASAAA
+MAMMMXMMMM
+MXMXAXMASX
+",
+{
+    part_1 => 18,
+    part_2 => 9
+}
+);

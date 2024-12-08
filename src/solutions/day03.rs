@@ -38,3 +38,11 @@ fn part_2(data: &str) -> usize {
         })
         .sum()
 }
+
+crate::test_day!(
+"xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))",
+{
+    part_1 => 161,
+    part_2 => 48
+}
+);
