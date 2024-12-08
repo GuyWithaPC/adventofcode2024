@@ -1,7 +1,7 @@
 use crate::util::grid_positions::Position;
 use itertools::Itertools;
 
-crate::day!("" => {
+crate::day!("Resonant Collinearity" => {
     part_1,
     part_2
 });
