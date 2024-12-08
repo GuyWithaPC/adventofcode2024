@@ -2,7 +2,7 @@
  * Structs to make it easier to define positions in a grid (no more evil messing around with tuples)
  * They are implemented as if positive X is right, negative X is left, positive Y is down, negative Y is up.
  */
-use std::ops::{Add, AddAssign, Sub, SubAssign};
+use std::ops::{Add, AddAssign, Mul, Sub, SubAssign};
 
 /**
  * An integer position
@@ -16,6 +16,18 @@ pub struct Position {
 impl Position {
     pub fn new(x: isize, y: isize) -> Position {
         Position { x, y }
+    }
+}
+
+impl From<Position> for Direction {
+    fn from(pos: Position) -> Direction {
+        Direction::new(pos.x, pos.y)
+    }
+}
+
+impl From<Direction> for Position {
+    fn from(dir: Direction) -> Position {
+        Position::new(dir.x, dir.y)
     }
 }
 
@@ -125,5 +137,12 @@ impl From<(isize, isize)> for Direction {
 impl From<Direction> for (isize, isize) {
     fn from(dir: Direction) -> (isize, isize) {
         (dir.x, dir.y)
+    }
+}
+
+impl Mul<isize> for Direction {
+    type Output = Self;
+    fn mul(self, rhs: isize) -> Self {
+        Self::new(self.x * rhs, self.y * rhs)
     }
 }
