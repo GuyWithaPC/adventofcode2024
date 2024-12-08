@@ -123,3 +123,65 @@ macro_rules! day {
         }
     };
 }
+
+#[macro_export]
+macro_rules! test_day {
+    ($test_string:literal, {$p1:ident => $p1_answer:literal$(,)?}) => {
+        #[cfg(test)]
+        mod test {
+            use indoc::indoc;
+            use super::*;
+            const TEST: &str = indoc! {$test_string};
+            #[test]
+            fn p1_test() {
+                assert_eq!($p1(TEST), $p1_answer);
+            }
+        }
+    };
+    ($test_string:literal, {$p1:ident => $p1_answer:literal, $p2:ident => $p2_answer:literal}) => {
+        #[cfg(test)]
+        mod test {
+            use indoc::indoc;
+            use super::*;
+            const TEST: &str = indoc! {$test_string};
+            #[test]
+            fn p1_test() {
+                assert_eq!($p1(TEST), $p1_answer);
+            }
+            #[test]
+            fn p2_test() {
+                assert_eq!($p2(TEST), $p2_answer);
+            }
+        }
+    };
+    ($test_string:literal + bars, {$p1:ident => $p1_answer:literal$(,)?}) => {
+        #[cfg(test)]
+        mod test {
+            use indoc::indoc;
+            use indicatif::ProgressBar;
+            use super::*;
+            const TEST: &str = indoc! {$test_string};
+            #[test]
+            fn p1_test() {
+                assert_eq!($p1(TEST, &ProgressBar::hidden()), $p1_answer);
+            }
+        }
+    };
+    ($test_string:literal + bars, {$p1:ident => $p1_answer:literal, $p2:ident => $p2_answer:literal}) => {
+        #[cfg(test)]
+        mod test {
+            use indoc::indoc;
+            use indicatif::ProgressBar;
+            use super::*;
+            const TEST: &str = indoc! {$test_string};
+            #[test]
+            fn p1_test() {
+                assert_eq!($p1(TEST, &ProgressBar::hidden()), $p1_answer);
+            }
+            #[test]
+            fn p2_test() {
+                assert_eq!($p2(TEST, &ProgressBar::hidden()), $p2_answer);
+            }
+        }
+    };
+}

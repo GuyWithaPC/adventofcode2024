@@ -38,3 +38,18 @@ fn split_lists(data: &str) -> (Vec<isize>, Vec<isize>) {
     }
     return (list_a, list_b);
 }
+
+crate::test_day!(
+"
+3   4
+4   3
+2   5
+1   3
+3   9
+3   3
+",
+{
+    part_1 => 11,
+    part_2 => 13
+}
+);

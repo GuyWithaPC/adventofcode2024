@@ -63,11 +63,8 @@ fn parse_input(input: &str) -> Vec<(usize, Vec<usize>)> {
         .collect()
 }
 
-#[cfg(test)]
-mod test {
-    use super::*;
-
-    const TEST: &str = "\
+crate::test_day!(
+"
 190: 10 19
 3267: 81 40 27
 83: 17 5
@@ -76,15 +73,10 @@ mod test {
 161011: 16 10 13
 192: 17 8 14
 21037: 9 7 18 13
-292: 11 6 16 20";
-
-    #[test]
-    fn p1_test() {
-        assert_eq!(part_1(TEST, &ProgressBar::hidden()), 3749);
-    }
-
-    #[test]
-    fn p2_test() {
-        assert_eq!(part_2(TEST, &ProgressBar::hidden()), 11387);
-    }
+292: 11 6 16 20
+" + bars,
+{
+    part_1 => 3749,
+    part_2 => 11387
 }
+);
