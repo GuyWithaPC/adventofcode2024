@@ -1,10 +1,12 @@
-use crate::util::grid_positions::Position;
+use crate::util::positions::Vec2;
 use itertools::Itertools;
 
 crate::day!("Resonant Collinearity" => {
     part_1,
     part_2
 });
+
+type Position = Vec2<isize>;
 
 fn part_1(data: &str) -> usize {
     let grid = parse_input(data);
@@ -15,14 +17,9 @@ fn part_1(data: &str) -> usize {
                 .map(|pair| get_antinodes((*pair[0], *pair[1])))
         })
         .flatten()
-        .fold(Vec::new(), |mut v: Vec<Position>, (a, b): (Position, Position)| {
-            v.push(a);
-            v.push(b);
-            v
-        })
-        .iter()
+        .flatten()
         .unique()
-        .filter(|&&p| {
+        .filter(|&p| {
             if p.x < 0 || p.x >= x_max as isize {
                 return false;
             }
@@ -47,17 +44,17 @@ fn part_2(data: &str) -> usize {
         .count()
 }
 
-fn get_antinodes(positions: (Position, Position)) -> (Position, Position) {
+fn get_antinodes(positions: (Position, Position)) -> Vec<Position> {
     let (a, b) = positions;
-    let d = (b - a.into()).into();
-    (a - d, b + d)
+    let d = b - a;
+    vec![a - d, b + d]
 }
 
 fn get_all_antinodes(positions: (Position, Position), extents: (usize, usize)) -> Vec<Position> {
     let (a, b) = positions;
     let (max_x, max_y) = extents;
     let mut positions = Vec::new();
-    let d = (b - a.into()).into();
+    let d = b - a;
     let mut i_pos = a;
     loop {
         let check = i_pos - d;

@@ -1,2 +1,2 @@
-pub mod grid_positions;
+pub mod positions;
 pub mod iterators;

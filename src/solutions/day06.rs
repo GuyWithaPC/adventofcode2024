@@ -1,6 +1,6 @@
 use indicatif::ProgressBar;
 
-use crate::util::grid_positions::{Direction, Position};
+use crate::util::positions::Vec2;
 use std::collections::{HashMap, HashSet};
 
 crate::day!("Guard Gallivant" + bars => {
@@ -8,6 +8,8 @@ crate::day!("Guard Gallivant" + bars => {
     part_2
 });
 
+type Position = Vec2<isize>;
+type Direction = Vec2<isize>;
 type Grid = HashMap<Position, Token>;
 
 #[derive(Clone, Copy, Debug)]
