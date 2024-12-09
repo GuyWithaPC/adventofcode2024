@@ -1,11 +1,12 @@
+use indicatif::ProgressBar;
 use itertools::{repeat_n, Itertools};
 
-crate::day!("Disk Fragmenter" => {
+crate::day!("Disk Fragmenter" + bars => {
     part_1,
     part_2
 });
 
-fn part_1(data: &str) -> usize {
+fn part_1(data: &str, _: &ProgressBar) -> usize {
     let file_map: Vec<Option<usize>> = data.chars().filter(|&c| c != '\n').batching(|it| {
         if let Some(a) = it.next() {
             if let Some(b) = it.next() {
@@ -46,7 +47,7 @@ enum Block {
     Empty(usize)
 }
 
-fn part_2(data: &str) -> usize {
+fn part_2(data: &str, bar: &ProgressBar) -> usize {
     let mut blocks: Vec<Block> = data.chars().filter(|&c| c != '\n')
         .batching(|it| {
             if let Some(a) = it.next() {
@@ -67,6 +68,7 @@ fn part_2(data: &str) -> usize {
         .collect();
     let mut consolidate = blocks.clone();
     blocks.reverse();
+    bar.set_length(blocks.len() as u64);
     for block in blocks {
         if let Block::Full(i, full_size) = block {
             let (found, full_block, empty_block, index) = {
@@ -91,6 +93,7 @@ fn part_2(data: &str) -> usize {
                 consolidate.insert(index + 1, empty_block);
             }
         }
+        bar.inc(1);
     }
     consolidate.iter()
         .map(|&b| {
@@ -108,7 +111,7 @@ fn part_2(data: &str) -> usize {
 crate::test_day!(
 "
 2333133121414131402
-",
+" + bars,
 {
     part_1 => 1928,
     part_2 => 2858
