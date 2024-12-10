@@ -4,9 +4,4 @@ crate::day!("" => {
 
 // TODO
 
-crate::test_day!(
-"",
-{
-
-}
-);
+crate::test_day!("", {});

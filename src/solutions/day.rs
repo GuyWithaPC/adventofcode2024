@@ -126,14 +126,12 @@ macro_rules! day {
 
 #[macro_export]
 macro_rules! test_day {
-    ($test_string:literal, {}) => {
-
-    };
+    ($test_string:literal, {}) => {};
     ($test_string:literal, {$p1:ident => $p1_answer:literal$(,)?}) => {
         #[cfg(test)]
         mod test {
-            use indoc::indoc;
             use super::*;
+            use indoc::indoc;
             const TEST: &str = indoc! {$test_string};
             #[test]
             fn p1_test() {
@@ -144,8 +142,8 @@ macro_rules! test_day {
     ($test_string:literal, {$p1:ident => $p1_answer:literal, $p2:ident => $p2_answer:literal}) => {
         #[cfg(test)]
         mod test {
-            use indoc::indoc;
             use super::*;
+            use indoc::indoc;
             const TEST: &str = indoc! {$test_string};
             #[test]
             fn p1_test() {
@@ -160,9 +158,9 @@ macro_rules! test_day {
     ($test_string:literal + bars, {$p1:ident => $p1_answer:literal$(,)?}) => {
         #[cfg(test)]
         mod test {
-            use indoc::indoc;
-            use indicatif::ProgressBar;
             use super::*;
+            use indicatif::ProgressBar;
+            use indoc::indoc;
             const TEST: &str = indoc! {$test_string};
             #[test]
             fn p1_test() {
@@ -173,9 +171,9 @@ macro_rules! test_day {
     ($test_string:literal + bars, {$p1:ident => $p1_answer:literal, $p2:ident => $p2_answer:literal}) => {
         #[cfg(test)]
         mod test {
-            use indoc::indoc;
-            use indicatif::ProgressBar;
             use super::*;
+            use indicatif::ProgressBar;
+            use indoc::indoc;
             const TEST: &str = indoc! {$test_string};
             #[test]
             fn p1_test() {

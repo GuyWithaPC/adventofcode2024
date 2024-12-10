@@ -11,9 +11,11 @@ type Position = Vec2<isize>;
 fn part_1(data: &str) -> usize {
     let grid = parse_input(data);
     let (x_max, y_max) = grid.extents;
-    grid.antennae.iter()
+    grid.antennae
+        .iter()
         .map(|ants| {
-            ants.iter().combinations(2)
+            ants.iter()
+                .combinations(2)
                 .map(|pair| get_antinodes((*pair[0], *pair[1])))
         })
         .flatten()
@@ -33,9 +35,11 @@ fn part_1(data: &str) -> usize {
 
 fn part_2(data: &str) -> usize {
     let grid = parse_input(data);
-    grid.antennae.iter()
+    grid.antennae
+        .iter()
         .map(|ants| {
-            ants.iter().combinations(2)
+            ants.iter()
+                .combinations(2)
                 .map(|pair| get_all_antinodes((*pair[0], *pair[1]), grid.extents))
         })
         .flatten()
@@ -77,29 +81,33 @@ fn get_all_antinodes(positions: (Position, Position), extents: (usize, usize)) -
 #[derive(Debug)]
 struct Grid {
     pub antennae: Vec<Vec<Position>>,
-    pub extents: (usize, usize) // x,y extents
+    pub extents: (usize, usize), // x,y extents
 }
 
 fn parse_input(input: &str) -> Grid {
     let extents: (usize, usize) = (input.lines().next().unwrap().len(), input.lines().count());
-    let antennae: Vec<Vec<Position>> = ('0'..='9').chain('a'..='z').chain('A'..='Z')
+    let antennae: Vec<Vec<Position>> = ('0'..='9')
+        .chain('a'..='z')
+        .chain('A'..='Z')
         .map(|antenna| {
-            input.lines().enumerate().map(|(y, line)| {
-                line.chars().enumerate().filter_map(move |(x, c)| {
-                    if c == antenna {
-                        Some(Position::new(x as isize, y as isize))
-                    } else {
-                        None
-                    }
+            input
+                .lines()
+                .enumerate()
+                .map(|(y, line)| {
+                    line.chars().enumerate().filter_map(move |(x, c)| {
+                        if c == antenna {
+                            Some(Position::new(x as isize, y as isize))
+                        } else {
+                            None
+                        }
+                    })
                 })
-            }).flatten().collect()
+                .flatten()
+                .collect()
         })
         .filter(|l: &Vec<Position>| l.len() != 0)
         .collect();
-    Grid {
-        antennae,
-        extents
-    }
+    Grid { antennae, extents }
 }
 
 crate::test_day!(

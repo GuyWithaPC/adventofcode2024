@@ -1,6 +1,6 @@
 use indicatif::ProgressBar;
-use itertools::Itertools;
 use itertools::repeat_n;
+use itertools::Itertools;
 
 crate::day!("Bridge Repair" + bars => {
     part_1,
@@ -9,31 +9,38 @@ crate::day!("Bridge Repair" + bars => {
 
 fn part_1(data: &str, _: &ProgressBar) -> usize {
     let data = parse_input(data);
-    data.iter().filter(|(test_value, values)| {
-        repeat_n(vec![Operator::Mul,Operator::Add].iter(), values.len() - 1)
-            .multi_cartesian_product()
-            .map(|ops| apply_operators(values, ops))
-            .any(|v| v == *test_value)
-    }).fold(0, |acc, (test_value, _)| acc + *test_value)
+    data.iter()
+        .filter(|(test_value, values)| {
+            repeat_n(vec![Operator::Mul, Operator::Add].iter(), values.len() - 1)
+                .multi_cartesian_product()
+                .map(|ops| apply_operators(values, ops))
+                .any(|v| v == *test_value)
+        })
+        .fold(0, |acc, (test_value, _)| acc + *test_value)
 }
 
 fn part_2(data: &str, bar: &ProgressBar) -> usize {
     let data = parse_input(data);
     bar.set_length(data.len() as u64);
-    data.iter().filter(|(test_value, values)| {
-        bar.inc(1);
-        repeat_n(vec![Operator::Mul,Operator::Add,Operator::Con].iter(), values.len() - 1)
+    data.iter()
+        .filter(|(test_value, values)| {
+            bar.inc(1);
+            repeat_n(
+                vec![Operator::Mul, Operator::Add, Operator::Con].iter(),
+                values.len() - 1,
+            )
             .multi_cartesian_product()
             .map(|ops| apply_operators(values, ops))
             .any(|v| v == *test_value)
-    }).fold(0, |acc, (test_value, _)| acc + *test_value)
+        })
+        .fold(0, |acc, (test_value, _)| acc + *test_value)
 }
 
 #[derive(Clone, Copy, Debug)]
 enum Operator {
     Mul,
     Add,
-    Con
+    Con,
 }
 
 fn apply_operators(values: &Vec<usize>, ops: Vec<&Operator>) -> usize {
@@ -49,15 +56,19 @@ fn apply_operator(lhs: usize, rhs: usize, op: Operator) -> usize {
     match op {
         Operator::Add => lhs + rhs,
         Operator::Mul => lhs * rhs,
-        Operator::Con => format!("{lhs}{rhs}").parse::<usize>().unwrap()
+        Operator::Con => format!("{lhs}{rhs}").parse::<usize>().unwrap(),
     }
 }
 
 fn parse_input(input: &str) -> Vec<(usize, Vec<usize>)> {
-    input.lines()
+    input
+        .lines()
         .map(|l| {
             let (first, rest) = l.split_once(": ").unwrap();
-            let rest_vec = rest.split(" ").map(|d| d.parse::<usize>().unwrap()).collect();
+            let rest_vec = rest
+                .split(" ")
+                .map(|d| d.parse::<usize>().unwrap())
+                .collect();
             (first.parse::<usize>().unwrap(), rest_vec)
         })
         .collect()

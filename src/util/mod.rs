@@ -1,2 +1,2 @@
-pub mod positions;
 pub mod iterators;
+pub mod positions;
