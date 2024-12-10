@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 
 use indicatif::ProgressBar;
 use itertools::Itertools;
@@ -16,9 +16,10 @@ type Grid = HashMap<Position, usize>;
 fn part_1(data: &str, _: &ProgressBar) -> usize {
     let map = parse_input(data);
     let trailheads = get_number(&map, 0);
-    trailheads.iter().map(|&start| {
-        get_number(&filter_unreachable(&map, start), 9).len()
-    }).sum()
+    trailheads
+        .iter()
+        .map(|&start| get_number(&filter_unreachable(&map, start), 9).len())
+        .sum()
 }
 
 fn part_2(data: &str, bar: &ProgressBar) -> usize {
@@ -26,33 +27,40 @@ fn part_2(data: &str, bar: &ProgressBar) -> usize {
     let starts = get_number(&map, 0);
     let ends = get_number(&map, 9);
     bar.set_length((starts.len() * ends.len()) as u64);
-    starts.iter().cartesian_product(ends).map(|(&start, end)| {
-        bar.inc(1);
-        distinct_trails(&map, start, end)
-    }).sum()
+    starts
+        .iter()
+        .cartesian_product(ends)
+        .map(|(&start, end)| {
+            bar.inc(1);
+            distinct_trails(&map, start, end)
+        })
+        .sum()
 }
 
 fn parse_input(input: &str) -> Grid {
-    input.lines().enumerate().flat_map(|(y, row)| {
-        row.chars().enumerate().map(move |(x, c)| {
-            (Position::new(x as isize, y as isize), c.to_digit(10).unwrap() as usize)
+    input
+        .lines()
+        .enumerate()
+        .flat_map(|(y, row)| {
+            row.chars().enumerate().map(move |(x, c)| {
+                (
+                    Position::new(x as isize, y as isize),
+                    c.to_digit(10).unwrap() as usize,
+                )
+            })
         })
-    }).collect()
+        .collect()
 }
 
 fn get_number(map: &Grid, num: usize) -> Vec<Position> {
-    map.iter().filter_map(|(&pos, &value)| {
-        if value == num {
-            Some(pos)
-        } else {
-            None
-        }
-    }).collect()
+    map.iter()
+        .filter_map(|(&pos, &value)| if value == num { Some(pos) } else { None })
+        .collect()
 }
 
 /// filter out unreachable spots in a copy of the given map
 fn filter_unreachable(map: &Grid, start: Position) -> Grid {
-    let directions: [Vec2<isize>;4] = [Vec2::up(), Vec2::right(), Vec2::down(), Vec2::left()];
+    let directions: [Vec2<isize>; 4] = [Vec2::up(), Vec2::right(), Vec2::down(), Vec2::left()];
     let mut filtered: HashMap<Position, usize> = HashMap::new();
     let mut to_visit: Vec<(usize, Position)> = Vec::new();
     filtered.insert(start, map.get(&start).copied().unwrap());
@@ -81,7 +89,7 @@ fn filter_unreachable(map: &Grid, start: Position) -> Grid {
 }
 
 fn distinct_trails(map: &Grid, start: Position, end: Position) -> usize {
-    let directions: [Vec2<isize>;4] = [Vec2::up(), Vec2::right(), Vec2::down(), Vec2::left()];
+    let directions: [Vec2<isize>; 4] = [Vec2::up(), Vec2::right(), Vec2::down(), Vec2::left()];
     let mut to_visit: Vec<(usize, Position)> = Vec::new();
     let mut paths = 0;
     to_visit.push((0, start));
