@@ -1,10 +1,11 @@
 use std::collections::{HashMap, HashSet};
 
+use indicatif::ProgressBar;
 use itertools::Itertools;
 
 use crate::util::positions::Vec2;
 
-crate::day!("Hoof It" => {
+crate::day!("Hoof It" + bars => {
     part_1,
     part_2
 });
@@ -12,7 +13,7 @@ crate::day!("Hoof It" => {
 type Position = Vec2<isize>;
 type Grid = HashMap<Position, usize>;
 
-fn part_1(data: &str) -> usize {
+fn part_1(data: &str, _: &ProgressBar) -> usize {
     let map = parse_input(data);
     let trailheads = get_number(&map, 0);
     trailheads.iter().map(|&start| {
@@ -20,11 +21,13 @@ fn part_1(data: &str) -> usize {
     }).sum()
 }
 
-fn part_2(data: &str) -> usize {
+fn part_2(data: &str, bar: &ProgressBar) -> usize {
     let map = parse_input(data);
     let starts = get_number(&map, 0);
     let ends = get_number(&map, 9);
+    bar.set_length((starts.len() * ends.len()) as u64);
     starts.iter().cartesian_product(ends).map(|(&start, end)| {
+        bar.inc(1);
         distinct_trails(&map, start, end)
     }).sum()
 }
@@ -113,7 +116,7 @@ crate::test_day!(
 32019012
 01329801
 10456732
-",
+" + bars,
 {
     part_1 => 36,
     part_2 => 81
