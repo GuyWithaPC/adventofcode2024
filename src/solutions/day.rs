@@ -98,7 +98,7 @@ macro_rules! day {
         pub fn main(input: &str) {
             use regex::Regex;
             use std::file;
-            use indicatif::{ProgressBar, ProgressDrawTarget}
+            use indicatif::{ProgressBar, ProgressDrawTarget, ProgressStyle};
             let day_no = Regex::new(r"day(\d+).rs")
                 .unwrap()
                 .captures(file!())
