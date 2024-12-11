@@ -28,6 +28,14 @@ where
     pub fn dot(self, rhs: Self) -> I {
         self.x * rhs.x + self.y * rhs.y
     }
+
+    pub fn components_try_into<T: NumOps + Copy + TryFrom<I>>(self) -> Result<Vec2<T>,<T as TryFrom<I>>::Error> {
+        match (self.x.try_into(), self.y.try_into()) {
+            (Ok(x), Ok(y)) => Ok(Vec2 {x, y}),
+            (Err(e), _) => Err(e),
+            (_, Err(e)) => Err(e)
+        }
+    }
 }
 
 impl<I, N> Vec2<I>

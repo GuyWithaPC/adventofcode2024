@@ -13,10 +13,8 @@ where
     T: Clone,
 {
     pub fn new(width: usize, height: usize) -> Self {
-        let mut data = Vec::with_capacity(width * height);
-        data.fill(None);
         Grid {
-            data,
+            data: vec![None; width * height],
             width,
             height,
         }
@@ -186,7 +184,7 @@ where
                     let new_height = std::cmp::max(y, height);
                     (new_width, new_height)
                 });
-        let mut grid = Grid::new(width, height);
+        let mut grid = Grid::new(width + 1, height + 1);
         for (x, y, v) in new_values {
             grid.set(x, y, v);
         }
@@ -215,5 +213,31 @@ where
             width,
             height,
         }
+    }
+}
+
+impl <T> std::fmt::Debug for Grid<T>
+where T: Clone + std::fmt::Debug {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        for y in 0..self.height {
+            for x in 0..self.width {
+                match &self.data[x + y * self.width] {
+                    Some(v) => {
+                        write!(f, "{:?}", v)?;
+                    }
+                    None => {
+                        write!(f, " ")?;
+                    }
+                }
+                
+                if x != self.width - 1 {
+                    write!(f, " ")?;
+                }
+            }
+            if y != self.height - 1 {
+                write!(f, "\n")?;
+            }
+        }
+        Ok(())
     }
 }

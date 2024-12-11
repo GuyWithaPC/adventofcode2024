@@ -1,7 +1,7 @@
 use indicatif::ProgressBar;
 
-use crate::util::positions::Vec2;
-use std::collections::{HashMap, HashSet};
+use crate::util::{grid::Grid, positions::Vec2};
+use std::collections::HashSet;
 
 crate::day!("Guard Gallivant" + bars => {
     part_1,
@@ -10,9 +10,8 @@ crate::day!("Guard Gallivant" + bars => {
 
 type Position = Vec2<isize>;
 type Direction = Vec2<isize>;
-type Grid = HashMap<Position, Token>;
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy)]
 enum Token {
     Empty,
     Obstacle,
@@ -26,8 +25,8 @@ fn part_1(data: &str, _: &ProgressBar) -> usize {
     let mut positions: HashSet<Position> = HashSet::new();
     positions.insert(pos);
     'outer: loop {
-        match map.get(&(pos + dir)) {
-            Some(Token::Obstacle) => dir = dir.rotate_right(),
+        match map.get_coord(pos + dir) {
+            Some(&Token::Obstacle) => dir = dir.rotate_right(),
             None => break 'outer,
             _ => {
                 pos = pos + dir;
@@ -48,7 +47,7 @@ fn part_2(data: &str, bar: &ProgressBar) -> usize {
     let mut positions: HashSet<Position> = HashSet::new();
     positions.insert(pos);
     'outer: loop {
-        match map.get(&(pos + dir)) {
+        match map.get_coord(pos + dir) {
             Some(Token::Obstacle) => {
                 dir = dir.rotate_right();
             }
@@ -71,16 +70,16 @@ fn can_loop(
     mut pos: Position,
     mut dir: Direction,
     already_seen: &HashSet<Position>,
-    map: &mut Grid,
+    map: &mut Grid<Token>,
 ) -> bool {
-    match map.get(&(pos + dir)) {
+    match map.get_coord(pos + dir) {
         Some(Token::Empty) => {}
         _ => {
             return false;
         }
     };
     let test_pos = pos + dir;
-    map.insert(test_pos, Token::Obstacle);
+    map.set_coord(test_pos, Token::Obstacle);
     if already_seen.contains(&(pos + dir)) {
         pos = get_initial_guard_position(map);
         dir = Direction::up();
@@ -88,7 +87,7 @@ fn can_loop(
     let mut visited: HashSet<(Position, Direction)> = HashSet::new();
     let mut is_loop = false;
     'outer: loop {
-        match map.get(&(pos + dir)) {
+        match map.get_coord(pos + dir) {
             Some(Token::Obstacle) => {
                 dir = dir.rotate_right();
             }
@@ -104,33 +103,44 @@ fn can_loop(
             }
         }
     }
-    map.insert(test_pos, Token::Empty);
+    map.set_coord(test_pos, Token::Empty);
     return is_loop;
 }
 
-fn get_initial_guard_position(map: &Grid) -> Position {
-    map.iter()
-        .filter_map(|(pos, token)| match token {
-            Token::Guard => Some(*pos),
-            _ => None,
-        })
-        .next()
-        .unwrap()
+fn get_initial_guard_position(map: &Grid<Token>) -> Position {
+    map.iter_coords().filter_map(|(pos, token): (Vec2<usize>, _)| {
+        match token {
+            Some(&Token::Guard) => Some(pos.components_try_into().unwrap()),
+            _ => None
+        }
+    })
+    .next()
+    .unwrap()
 }
 
-fn parse_input(input: &str) -> Grid {
+fn parse_input(input: &str) -> Grid<Token> {
     input
         .lines()
         .enumerate()
         .map(|(row, l)| {
             l.chars().enumerate().map(move |(col, c)| match c {
-                '#' => (Position::new(col as isize, row as isize), Token::Obstacle),
-                '^' => (Position::new(col as isize, row as isize), Token::Guard), // guard facing up
-                _ => (Position::new(col as isize, row as isize), Token::Empty),
+                '#' => ((col, row), Some(Token::Obstacle)),
+                '^' => ((col, row), Some(Token::Guard)), // guard facing up
+                _ => ((col, row), Some(Token::Empty)),
             })
         })
         .flatten()
         .collect()
+}
+
+impl std::fmt::Debug for Token {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", match self {
+            Token::Empty => ".",
+            Token::Obstacle => "#",
+            Token::Guard => "^"
+        })
+    }
 }
 
 crate::test_day!(
