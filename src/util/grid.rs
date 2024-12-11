@@ -1,4 +1,4 @@
-use itertools::Itertools;
+use itertools::{repeat_n, Itertools};
 
 #[derive(Clone)]
 pub struct Grid<T> 
@@ -129,10 +129,6 @@ where T: Clone {
             return false;
         };
         self.remove(x, y)
-    }
-
-    pub fn iter_lines(&self) -> impl Iterator<Item = Option<&T>> {
-        self.data.iter().chunks(self.width).map(|v| v.as_ref())
     }
 
     pub fn iter_coords<C: From<(usize, usize)>>(&self) -> impl Iterator<Item = (C, Option<&T>)> {

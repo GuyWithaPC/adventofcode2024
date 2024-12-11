@@ -77,6 +77,13 @@ where
     }
 }
 
+impl<I> Vec2<I>
+where I: NumOps + Copy + num_traits::identities::Zero {
+    pub fn zero() -> Self {
+        Self::new(I::zero(), I::zero())
+    }
+}
+
 impl<I> Add<Vec2<I>> for Vec2<I>
 where
     I: NumOps + Copy,

@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use crate::util::{grid::Grid, positions::Vec2};
 
 use itertools::Itertools;
 
@@ -9,46 +9,25 @@ crate::day!("Ceres Search" => {
 
 fn part_1(data: &str) -> usize {
     let grid = file_to_grid(data);
-    let (rows, cols) = file_grid_size(data);
-    (0..rows)
-        .cartesian_product(0..cols)
-        .filter(|(y, x)| grid[&(*y, *x)] == 'X')
-        .fold(0, |count, (y, x)| {
-            count
-                + follow_xmas(
-                    &grid,
-                    (y.try_into().unwrap(), x.try_into().unwrap()),
-                    (0, 0),
-                    'X',
-                )
+    (0..(grid.width() as isize))
+        .cartesian_product(0..(grid.height() as isize))
+        .filter(|(x, y)| grid.get(*x, *y) == Some(&'X'))
+        .fold(0, |count, (x, y)| {
+            count + follow_xmas(&grid, Vec2::new(x, y), Vec2::new(0, 0), 'X')
         })
 }
 
 fn part_2(data: &str) -> usize {
     let grid = file_to_grid(data);
-    let (rows, cols) = file_grid_size(data);
-    (0..rows)
-        .cartesian_product(0..cols)
-        .filter(|(y, x)| grid[&(*y, *x)] == 'A')
-        .filter(|(y, x)| is_xmas(&grid, ((*y).try_into().unwrap(), (*x).try_into().unwrap())))
+    (0..(grid.width() as isize))
+        .cartesian_product(0..(grid.height() as isize))
+        .filter(|(x, y)| grid.get(*x, *y) == Some(&'A'))
+        .filter(|(x, y)| is_xmas(&grid, Vec2::new((*x).try_into().unwrap(), (*y).try_into().unwrap())))
         .count()
 }
 
-fn file_grid_size(data: &str) -> (usize, usize) {
-    (data.lines().count(), data.lines().next().unwrap().len())
-}
-
-fn file_to_grid(data: &str) -> HashMap<(usize, usize), char> {
-    data.lines()
-        .scan(0, |row_no, row| {
-            *row_no += 1;
-            Some(row.chars().scan((*row_no - 1, 0), |(row_no, col_no), c| {
-                *col_no += 1;
-                Some(((*row_no, *col_no - 1), c))
-            }))
-        })
-        .flatten()
-        .collect()
+fn file_to_grid(data: &str) -> Grid<char> {
+    data.lines().map(|l| l.chars().collect::<Vec<char>>()).collect()
 }
 
 fn next_xmas(c: char) -> Option<char> {
@@ -61,25 +40,25 @@ fn next_xmas(c: char) -> Option<char> {
 }
 
 fn follow_xmas(
-    grid: &HashMap<(usize, usize), char>,
-    loc: (isize, isize),
-    dir: (isize, isize),
+    grid: &Grid<char>,
+    loc: Vec2<isize>,
+    dir: Vec2<isize>,
     last_char: char,
 ) -> usize {
     if let Some(check_char) = next_xmas(last_char) {
-        if dir == (0, 0) {
+        if dir == Vec2::zero() {
             // check all directions
             (-1..=1)
                 .cartesian_product(-1..=1)
                 .filter(|(x, y)| *y != 0 || *x != 0)
                 .fold(0, |count, (x, y)| {
-                    count + follow_xmas(grid, loc, (y, x), last_char)
+                    count + follow_xmas(grid, loc, Vec2::new(x, y), last_char)
                 })
         } else {
             // check just 1 direction
-            let (y, x) = (loc.0 + dir.0, loc.1 + dir.1);
-            if grid.get(&(y as usize, x as usize)) == Some(&check_char) {
-                follow_xmas(grid, (y, x), dir, check_char)
+            let new_loc = loc + dir;
+            if grid.get_coord(new_loc) == Some(&check_char) {
+                follow_xmas(grid, new_loc, dir, check_char)
             } else {
                 0
             }
@@ -89,11 +68,11 @@ fn follow_xmas(
     }
 }
 
-fn is_xmas(grid: &HashMap<(usize, usize), char>, loc: (isize, isize)) -> bool {
-    if let Some(pattern) = [(-1, -1), (-1, 1), (1, -1), (1, 1)]
+fn is_xmas(grid: &Grid<char>, loc: Vec2<isize>) -> bool {
+    if let Some(pattern) = [Vec2::new(-1, -1), Vec2::new(-1, 1), Vec2::new(1, -1), Vec2::new(1, 1)]
         .iter()
         .map(|dir| {
-            if let Some(c) = grid.get(&((loc.0 + dir.0) as usize, (loc.1 + dir.1) as usize)) {
+            if let Some(c) = grid.get_coord(loc + *dir) {
                 match *c {
                     'M' => Some(0),
                     'S' => Some(1),
