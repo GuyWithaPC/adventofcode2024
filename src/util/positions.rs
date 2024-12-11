@@ -78,7 +78,9 @@ where
 }
 
 impl<I> Vec2<I>
-where I: NumOps + Copy + num_traits::identities::Zero {
+where
+    I: NumOps + Copy + num_traits::identities::Zero,
+{
     pub fn zero() -> Self {
         Self::new(I::zero(), I::zero())
     }

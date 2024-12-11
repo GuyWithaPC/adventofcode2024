@@ -1,22 +1,24 @@
-use itertools::{repeat_n, Itertools};
-
 #[derive(Clone)]
-pub struct Grid<T> 
-where T: Clone {
+pub struct Grid<T>
+where
+    T: Clone,
+{
     data: Vec<Option<T>>,
     width: usize,
-    height: usize
+    height: usize,
 }
 
-impl <T> Grid<T>
-where T: Clone {
+impl<T> Grid<T>
+where
+    T: Clone,
+{
     pub fn new(width: usize, height: usize) -> Self {
         let mut data = Vec::with_capacity(width * height);
         data.fill(None);
         Grid {
             data,
             width,
-            height
+            height,
         }
     }
 
@@ -25,19 +27,23 @@ where T: Clone {
             Ok(Grid {
                 data: vec.into_iter().map(|v| Some(v)).collect(),
                 width,
-                height
+                height,
             })
         } else {
             Err("Tried to construct a Grid from a vec with the wrong dimensions.")
         }
     }
 
-    pub fn from_option_vec(width: usize, height: usize, vec: Vec<Option<T>>) -> Result<Self, &'static str> {
+    pub fn from_option_vec(
+        width: usize,
+        height: usize,
+        vec: Vec<Option<T>>,
+    ) -> Result<Self, &'static str> {
         if let Some(0) = (width * height).checked_sub(vec.len()) {
             Ok(Grid {
                 data: vec,
                 width,
-                height
+                height,
             })
         } else {
             Err("Tried to construct a Grid from a vec with the wrong dimensions.")
@@ -62,7 +68,7 @@ where T: Clone {
         return true;
     }
 
-    pub fn coord_in_bounds<CC: Into<(C,C)>, C: TryInto<usize>>(&self, coord: CC) -> bool {
+    pub fn coord_in_bounds<CC: Into<(C, C)>, C: TryInto<usize>>(&self, coord: CC) -> bool {
         let (x, y) = coord.into();
         self.in_bounds(x, y)
     }
@@ -74,10 +80,13 @@ where T: Clone {
         if x >= self.width || y >= self.height {
             return None;
         };
-        return Some((x,y));
+        return Some((x, y));
     }
 
-    fn check_coord_bounds<CC: Into<(C,C)>, C: TryInto<usize>>(&self, coord: CC) -> Option<(usize, usize)> {
+    fn check_coord_bounds<CC: Into<(C, C)>, C: TryInto<usize>>(
+        &self,
+        coord: CC,
+    ) -> Option<(usize, usize)> {
         let (x, y) = coord.into();
         self.check_bounds(x, y)
     }
@@ -89,7 +98,7 @@ where T: Clone {
         (&self.data[x + y * self.width]).as_ref()
     }
 
-    pub fn get_coord<CC: Into<(C,C)>, C: TryInto<usize>>(&self, coord: CC) -> Option<&T> {
+    pub fn get_coord<CC: Into<(C, C)>, C: TryInto<usize>>(&self, coord: CC) -> Option<&T> {
         let Some((x, y)) = self.check_coord_bounds(coord) else {
             return None;
         };
@@ -104,7 +113,7 @@ where T: Clone {
         return true;
     }
 
-    pub fn set_coord<CC: Into<(C,C)>, C: TryInto<usize>>(&mut self, coord: CC, val: T) -> bool {
+    pub fn set_coord<CC: Into<(C, C)>, C: TryInto<usize>>(&mut self, coord: CC, val: T) -> bool {
         let Some((x, y)) = self.check_coord_bounds(coord) else {
             return false;
         };
@@ -119,12 +128,12 @@ where T: Clone {
             Some(_) => {
                 self.data[x + y * self.width] = None;
                 true
-            },
-            None => false
+            }
+            None => false,
         }
     }
 
-    pub fn remove_coord<CC: Into<(C,C)>, C: TryInto<usize>>(&mut self, coord: CC) -> bool {
+    pub fn remove_coord<CC: Into<(C, C)>, C: TryInto<usize>>(&mut self, coord: CC) -> bool {
         let Some((x, y)) = self.check_coord_bounds(coord) else {
             return false;
         };
@@ -132,39 +141,51 @@ where T: Clone {
     }
 
     pub fn iter_coords<C: From<(usize, usize)>>(&self) -> impl Iterator<Item = (C, Option<&T>)> {
-        self.data.iter().enumerate().map(|(i, v)| {
-            ((i % self.width, i / self.width).into(), v.as_ref())
-        })
+        self.data
+            .iter()
+            .enumerate()
+            .map(|(i, v)| ((i % self.width, i / self.width).into(), v.as_ref()))
     }
 }
 
-impl <T> Grid<Option<T>>
-where T: Clone {
+impl<T> Grid<Option<T>>
+where
+    T: Clone,
+{
     pub fn unwrap_options(self) -> Grid<T> {
         Grid {
-            data: self.data.into_iter().map(|o| match o {
-                Some(v) => v,
-                None => None
-            }).collect(),
+            data: self
+                .data
+                .into_iter()
+                .map(|o| match o {
+                    Some(v) => v,
+                    None => None,
+                })
+                .collect(),
             width: self.width,
-            height: self.height
+            height: self.height,
         }
     }
 }
 
-impl <T, C> FromIterator<(C, Option<T>)> for Grid<T>
-where C: Into<(usize, usize)>, T: Clone {
+impl<T, C> FromIterator<(C, Option<T>)> for Grid<T>
+where
+    C: Into<(usize, usize)>,
+    T: Clone,
+{
     fn from_iter<IT: IntoIterator<Item = (C, Option<T>)>>(iter: IT) -> Self {
         let mut new_values: Vec<(usize, usize, T)> = Vec::new();
-        let (width, height) = iter.into_iter().fold((0usize, 0usize), |(width, height), (coord, val)| {
-            let (x, y) = coord.into();
-            if let Some(v) = val {
-                new_values.push((x, y, v));
-            }
-            let new_width = std::cmp::max(x, width);
-            let new_height = std::cmp::max(y, height);
-            (new_width, new_height)
-        });
+        let (width, height) =
+            iter.into_iter()
+                .fold((0usize, 0usize), |(width, height), (coord, val)| {
+                    let (x, y) = coord.into();
+                    if let Some(v) = val {
+                        new_values.push((x, y, v));
+                    }
+                    let new_width = std::cmp::max(x, width);
+                    let new_height = std::cmp::max(y, height);
+                    (new_width, new_height)
+                });
         let mut grid = Grid::new(width, height);
         for (x, y, v) in new_values {
             grid.set(x, y, v);
@@ -173,14 +194,15 @@ where C: Into<(usize, usize)>, T: Clone {
     }
 }
 
-impl <T> FromIterator<Vec<T>> for Grid<T>
-where T: Clone {
+impl<T> FromIterator<Vec<T>> for Grid<T>
+where
+    T: Clone,
+{
     fn from_iter<IT: IntoIterator<Item = Vec<T>>>(iter: IT) -> Self {
         let mut grid_storage: Vec<Option<T>> = Vec::new();
-        let (width, height) = iter.into_iter()
-            .map(|i| {
-                (i.len(), i.into_iter().map(|v| Some(v)).collect())
-            })
+        let (width, height) = iter
+            .into_iter()
+            .map(|i| (i.len(), i.into_iter().map(|v| Some(v)).collect()))
             .fold((0usize, 0usize), |(width, height), (row_width, mut row)| {
                 if width != 0 && row_width != width {
                     panic!("Attempted to make a Grid from an iterator with variable row widths");
@@ -191,7 +213,7 @@ where T: Clone {
         Self {
             data: grid_storage,
             width,
-            height
+            height,
         }
     }
 }

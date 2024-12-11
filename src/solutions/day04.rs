@@ -22,12 +22,19 @@ fn part_2(data: &str) -> usize {
     (0..(grid.width() as isize))
         .cartesian_product(0..(grid.height() as isize))
         .filter(|(x, y)| grid.get(*x, *y) == Some(&'A'))
-        .filter(|(x, y)| is_xmas(&grid, Vec2::new((*x).try_into().unwrap(), (*y).try_into().unwrap())))
+        .filter(|(x, y)| {
+            is_xmas(
+                &grid,
+                Vec2::new((*x).try_into().unwrap(), (*y).try_into().unwrap()),
+            )
+        })
         .count()
 }
 
 fn file_to_grid(data: &str) -> Grid<char> {
-    data.lines().map(|l| l.chars().collect::<Vec<char>>()).collect()
+    data.lines()
+        .map(|l| l.chars().collect::<Vec<char>>())
+        .collect()
 }
 
 fn next_xmas(c: char) -> Option<char> {
@@ -39,12 +46,7 @@ fn next_xmas(c: char) -> Option<char> {
     }
 }
 
-fn follow_xmas(
-    grid: &Grid<char>,
-    loc: Vec2<isize>,
-    dir: Vec2<isize>,
-    last_char: char,
-) -> usize {
+fn follow_xmas(grid: &Grid<char>, loc: Vec2<isize>, dir: Vec2<isize>, last_char: char) -> usize {
     if let Some(check_char) = next_xmas(last_char) {
         if dir == Vec2::zero() {
             // check all directions
@@ -69,20 +71,25 @@ fn follow_xmas(
 }
 
 fn is_xmas(grid: &Grid<char>, loc: Vec2<isize>) -> bool {
-    if let Some(pattern) = [Vec2::new(-1, -1), Vec2::new(-1, 1), Vec2::new(1, -1), Vec2::new(1, 1)]
-        .iter()
-        .map(|dir| {
-            if let Some(c) = grid.get_coord(loc + *dir) {
-                match *c {
-                    'M' => Some(0),
-                    'S' => Some(1),
-                    _ => None,
-                }
-            } else {
-                None
+    if let Some(pattern) = [
+        Vec2::new(-1, -1),
+        Vec2::new(-1, 1),
+        Vec2::new(1, -1),
+        Vec2::new(1, 1),
+    ]
+    .iter()
+    .map(|dir| {
+        if let Some(c) = grid.get_coord(loc + *dir) {
+            match *c {
+                'M' => Some(0),
+                'S' => Some(1),
+                _ => None,
             }
-        })
-        .collect::<Option<Vec<usize>>>()
+        } else {
+            None
+        }
+    })
+    .collect::<Option<Vec<usize>>>()
     {
         if pattern.len() != 4 || pattern.iter().fold(0usize, |sum, x| sum + *x) != 2usize {
             return false;
