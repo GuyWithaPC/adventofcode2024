@@ -108,14 +108,13 @@ fn can_loop(
 }
 
 fn get_initial_guard_position(map: &Grid<Token>) -> Position {
-    map.iter_coords().filter_map(|(pos, token): (Vec2<usize>, _)| {
-        match token {
+    map.iter_coords()
+        .filter_map(|(pos, token): (Vec2<usize>, _)| match token {
             Some(&Token::Guard) => Some(pos.components_try_into().unwrap()),
-            _ => None
-        }
-    })
-    .next()
-    .unwrap()
+            _ => None,
+        })
+        .next()
+        .unwrap()
 }
 
 fn parse_input(input: &str) -> Grid<Token> {
@@ -135,11 +134,15 @@ fn parse_input(input: &str) -> Grid<Token> {
 
 impl std::fmt::Debug for Token {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", match self {
-            Token::Empty => ".",
-            Token::Obstacle => "#",
-            Token::Guard => "^"
-        })
+        write!(
+            f,
+            "{}",
+            match self {
+                Token::Empty => ".",
+                Token::Obstacle => "#",
+                Token::Guard => "^",
+            }
+        )
     }
 }
 

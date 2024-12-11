@@ -216,8 +216,10 @@ where
     }
 }
 
-impl <T> std::fmt::Debug for Grid<T>
-where T: Clone + std::fmt::Debug {
+impl<T> std::fmt::Debug for Grid<T>
+where
+    T: Clone + std::fmt::Debug,
+{
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for y in 0..self.height {
             for x in 0..self.width {
@@ -229,7 +231,7 @@ where T: Clone + std::fmt::Debug {
                         write!(f, " ")?;
                     }
                 }
-                
+
                 if x != self.width - 1 {
                     write!(f, " ")?;
                 }
