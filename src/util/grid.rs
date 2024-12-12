@@ -216,9 +216,37 @@ where
     }
 }
 
-impl<T> std::fmt::Debug for Grid<T>
+impl<T> std::fmt::Display for Grid<T>
 where
-    T: Clone + std::fmt::Debug,
+    T: Clone + std::fmt::Display,
+{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        for y in 0..self.height {
+            for x in 0..self.width {
+                match &self.data[x + y * self.width] {
+                    Some(v) => {
+                        write!(f, "{}", v)?;
+                    }
+                    None => {
+                        write!(f, " ")?;
+                    }
+                }
+
+                if x != self.width - 1 {
+                    write!(f, " ")?;
+                }
+            }
+            if y != self.height - 1 {
+                write!(f, "\n")?;
+            }
+        }
+        Ok(())
+    }
+}
+
+impl <T> std::fmt::Debug for Grid<T>
+where 
+    T: Clone + std::fmt::Debug
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for y in 0..self.height {
